@@ -1,0 +1,111 @@
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+<div class="bg-main min-h-screen flex justify-center items-center transition-colors duration-300">
+    
+<div class="bg-card grid grid-cols-1 md:grid-cols-2 gap-8 shadow-2xl w-full max-w-5xl p-10 rounded-3xl border border-border-main transition-colors duration-300">
+        <!-- formulario -->
+        <div class="px-4 flex flex-col justify-center">
+            <h2 class="font-bold text-2xl text-brand">Registro</h2>
+            <p class="text-sm mt-4 text-text-main">Ingresa los datos solicitados</p>
+            
+            <form class="flex flex-col gap-4" [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
+            
+            
+                <div class="flex gap-3 flex-col mt-8 ">
+                    <!-- Username -->
+                    <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand" 
+                    type="text" formControlName="userName" placeholder="Ingresa tu nombre de usuario ex. DanexDR Criis203">
+                    @if(signUpForm.get('userName')?.invalid && signUpForm.get('userName')?.touched){
+                        <small class="text-red-500 mt-1 block">Ingresa tu nombre de usuario</small>
+                    }
+
+                    <!-- Primer nombre -->
+                    <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand" 
+                    type="text" formControlName="nameUser" placeholder="Ingresa tu nombre primer nombre">
+                    @if(signUpForm.get('nameUser')?.invalid && signUpForm.get('nameUser')?.touched){
+                        <small class="text-red-500 mt-1 block">Ingresa tu primer nombre</small>
+                    }
+
+                    <!-- Apellido  -->
+                    <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand" 
+                    type="text" formControlName="lastNameUser" placeholder="Ingresa tu apellido">
+                    @if(signUpForm.get('lastNameUser')?.invalid && signUpForm.get('lastNameUser')?.touched){
+                        <small class="text-red-500 mt-1 block">Ingresa tu apellido</small>
+                    }
+                    
+                    <!-- Email -->
+                    <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand" 
+                    type="email" formControlName="email" placeholder="tucorreo@mail.com">
+                    @if(signUpForm.get('email')?.invalid && signUpForm.get('email')?.touched){
+                        <small class="text-red-500 mt-1 block">Ingresa tu correo</small>
+                    }
+                    
+                    <div class="relative">
+                        <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand pr-10" 
+                        type="password" formControlName="password" placeholder="Ingresa tu contraseña">
+                        <span class="material-symbols-outlined absolute top-1/2 right-3 -translate-y-1/2 text-text-muted cursor-pointer hover:text-brand transition-colors">visibility</span>
+                    </div>
+                </div>
+        
+                <button class="bg-brand py-2 rounded-xl text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50 mt-2" 
+                        type="submit" [disabled]="signUpForm.invalid">
+                    Registrarse
+                </button>
+            </form>  
+
+            <div class="mt-10 grid grid-cols-3 items-center text-text-muted">
+                <hr class="border-border-main">
+                <p class="text-center text-sm font-medium">o</p>
+                <hr class="border-border-main">
+            </div>
+
+            <button (click)="goLogin()" class="bg-input border border-border-main text-text-main py-2 w-full rounded-xl mt-5 flex justify-center items-center gap-2 hover:bg-main transition-colors">
+                Ingresar
+                <span class="material-symbols-outlined">person_add</span>
+            </button>
+
+            <button class="mt-5 py-6 text-xs text-text-muted hover:text-brand transition-colors text-center w-full">
+                Olvidé mi contraseña
+            </button>
+        </div>
+
+
+        <!-- imagen -->
+        <div class="sm:block hidden  relative">
+            
+            <img 
+              class="absolute inset-0 rounded-2xl h-full w-full object-cover transition-opacity duration-1000 ease-in-out" 
+              src="/photo/login-photo.jpg" 
+              alt="Login Light"
+              [class.opacity-100]="!isDarkMode"
+              [class.opacity-0]="isDarkMode">
+
+            <img 
+              class="absolute inset-0 rounded-2xl h-full w-full object-cover transition-opacity duration-1000 ease-in-out" 
+              src="/photo/login-photo-night.png" 
+              alt="Login Dark"
+              [class.opacity-100]="isDarkMode"
+              [class.opacity-0]="!isDarkMode">
+        </div>
+
+        
+    </div>
+    
+
+    <button 
+        type="button"
+        (click)="toggleTheme()" 
+        class="p-2 rounded-full bg-input border border-border-main shadow-sm hover:opacity-80 transition-all duration-300 flex items-center justify-center">
+        
+        @if(isDarkMode) {
+        <span class="material-symbols-outlined text-yellow-400">light_mode</span>
+        } @else {
+        <span class="material-symbols-outlined text-brand transition-colors">dark_mode</span>
+        }
+    </button>
+</div>
+
+
+
+
+                

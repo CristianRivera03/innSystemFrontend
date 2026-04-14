@@ -1,0 +1,98 @@
+<div class="bg-main min-h-screen p-8 animate-fade-in">
+  <div class="max-w-4xl mx-auto bg-card rounded-2xl shadow-sm border border-border-main p-6">
+    
+    <div class="mb-8">
+      <h2 class="text-2xl font-bold text-brand">Gestión de Permisos</h2>
+      <p class="text-text-muted mt-1">Configura a qué módulos tiene acceso cada rol del sistema.</p>
+    </div>
+    
+    <div class="mb-8 p-4 bg-main/30 rounded-xl border-border-main flex flex-col md:flex-row gap-4 items-end">
+      <div class="flex-1 w-full">
+        <label for="new-role" class="block text-sm font-medium text-text-main mb-2">Crear nuevo rol</label>
+
+        <input type="text"
+        id = "new-role"
+        [(ngModel)] = "newRoleName"
+        placeholder="Ej : Auditor, Supervisor"
+        class="w-full p-3 rounded-xl border-border-main bg-input text-text-main focus:ring-brand focus:outline-none"
+        >
+      </div>
+
+      <button
+      (click)="createNewRole()"
+      [disabled]="!newRoleName"
+      class="bg-brand text-white px-6 py-3 rounded-xl font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed h-fit" 
+      >
+        Crear Rol
+      </button>
+    </div>
+    
+    <hr class="border-border-main mb-8">
+
+    <div class="mb-6">
+      <label for="role-select" class="block text-sm font-medium text-text-main mb-2">Selecciona un Rol</label>
+      
+
+
+
+      <select 
+        id="role-select"
+        aria-label="Menú para seleccionar el rol a configurar"
+        (change)="onRoleChange($event)"
+        class="w-full md:w-1/2 p-3 rounded-xl border border-border-main bg-input text-text-main focus:ring-2 focus:ring-brand focus:outline-none">
+        <option value="0">-- Seleccione un rol --</option>
+        
+        @for (role of roles; track role.idRole) {
+          <option [value]="role.idRole">{{ role.nameRol }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="bg-input border border-border-main rounded-xl overflow-hidden">
+      
+      @if (selectedRoleId === 0) {
+        <div class="p-8 text-center text-text-muted">
+          <span class="material-symbols-outlined text-4xl mb-2 opacity-50">lock</span>
+          <p>Selecciona un rol arriba para ver y modificar sus permisos.</p>
+        </div>
+      } @else {
+        
+        @for (modulo of modules; track modulo.id) {
+          <div class="flex items-center justify-between p-4 border-b border-border-main hover:bg-main/50 transition-colors last:border-b-0">
+            
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-text-muted">{{ modulo.icon }}</span>
+              <div>
+                <p class="font-bold text-text-main">{{ modulo.name }}</p>
+                <p class="text-xs text-text-muted">Ruta protegida: {{ modulo.path }}</p>
+              </div>
+            </div>
+
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input 
+                type="checkbox" 
+                [id]="'switch-' + modulo.id"
+                class="sr-only peer"
+                [checked]="selectedModuleIds.includes(modulo.id)"
+                (change)="toggleModule(modulo.id)">
+              
+              <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand"></div>
+            </label>
+
+          </div>
+        }
+      }
+
+    </div>
+
+    <div class="mt-6 flex justify-end">
+      <button 
+        (click)="savePermissions()"
+        [disabled]="selectedRoleId === 0"
+        class="bg-brand text-white px-6 py-2 rounded-xl font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed">
+        Guardar Permisos
+      </button>
+    </div>
+
+  </div>
+</div>

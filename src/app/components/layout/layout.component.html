@@ -1,0 +1,72 @@
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+
+<div class="flex h-screen bg-main transition-colors duration-300">
+    
+    <aside class="w-70 bg-card border-r border-border-main flex flex-col transition-colors duration-300">
+        
+        <div class="p-6">
+            <h2 class="text-2xl font-bold text-brand tracking-tight">Conecta2</h2>
+        </div>
+
+        <!--  -->
+        <nav class="flex-1 px-4 space-y-2 mt-4">
+            <!-- <a routerLink="/dashboard/feed" 
+               routerLinkActive="bg-brand text-white shadow-md" 
+               [routerLinkActiveOptions]="{exact: true}"
+               class="flex items-center gap-3 p-3 rounded-xl text-text-main hover:bg-main transition-all duration-200 group">
+                <span class="font-medium">Pagina Principal</span>
+            </a>
+            
+            @if (currentUser?.allowedModules?.some(modulo => modulo.name === "Gestión de Usuarios")) {
+                <a routerLink="/dashboard/manager-users" 
+                   routerLinkActive="bg-brand text-white shadow-md"
+                   class="flex items-center gap-3 p-3 rounded-xl text-text-main hover:bg-main transition-all duration-200 group">
+                    <span class="font-medium">Gestión de Usuarios</span>
+                </a>
+            } -->
+
+            <!--  -->
+            @for (modulo of currentUser?.allowedModules; track modulo.id){
+                <a [routerLink]="modulo.path" 
+               routerLinkActive="bg-brand text-white shadow-md" 
+               [routerLinkActiveOptions]="{exact: modulo.path === '/dashboard/feed'}"
+               class="flex items-center gap-3 p-3 rounded-xl text-text-main hover:bg-main transition-all duration-200 group">
+               <span class="material-symbols-outlined font-medium">{{ modulo.icon }}</span>
+                <span class="font-medium">{{modulo.name}}</span>
+            </a>
+            }
+
+            <!-- @if (currentUser?.roleName === "Admin") {
+                <a routerLink="/dashboard/role-manager" 
+                   routerLinkActive="bg-brand text-white shadow-md"
+                   class="flex items-center gap-3 p-3 rounded-xl text-text-main hover:bg-main transition-all duration-200 group">
+                    <span class="font-medium">Gestión de roles</span>
+                </a>
+            } -->
+        </nav>
+
+        <div class="p-4 border-t border-border-main bg-main/50 dark:bg-black/10">
+            <div class="flex items-center gap-3 p-2">
+                <div class="w-10 h-10 rounded-full bg-brand text-white flex items-center justify-center font-bold shadow-sm">
+                    {{currentUser?.nameUser?.charAt(0)}}
+                </div>
+                <div class="flex flex-col overflow-hidden">
+                    <span class="text-sm font-bold text-text-main truncate">
+                        {{currentUser?.nameUser}} {{currentUser?.lastNameUser}}
+                    </span>
+                    <span class="text-xs text-text-muted truncate">{{currentUser?.roleName}}</span>
+                </div>
+            </div>
+
+            <button (click)="logout()" 
+                    class="mt-4 w-full flex items-center justify-center gap-2 p-2 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 font-medium transition-colors">
+                Cerrar Sesión
+            </button>
+        </div>
+    </aside>
+
+    <main class="flex-1 overflow-y-auto p-6 bg-main transition-colors duration-300">
+        <router-outlet></router-outlet>
+    </main>
+</div>

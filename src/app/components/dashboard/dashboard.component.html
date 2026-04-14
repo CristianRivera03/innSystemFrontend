@@ -1,0 +1,85 @@
+<div class="bg-main">
+    <header class="">
+
+        <div class="text-brand">
+            <span>Bienvenido, <strong>{{currentUser?.nameUser}} {{currentUser?.lastNameUser}}</strong></span>
+            <button class="btn-logout" (click)="logout()" >Cerrar Sesión</button>
+        </div>
+    </header>
+
+
+    <main class="dashboard-content">
+
+        <section class="create-post-section card">
+            <h2>Crear nueva publicacion</h2>
+
+            <!-- declaracion de formularioo -->
+            <form [formGroup]="postForm" (ngSubmit)="createPost()">
+                <div class="form-group">
+                    <input type="text" formControlName="titlePost" placeholder="Titulo de la publicacion">
+                    @if (postForm.get('titlePost')?.invalid && postForm.get('titlePost')?.touched){
+                        <small class="error-text">El título es obligatorio (Máx. 100 caracteres).</small>
+                    }
+                </div>
+
+
+                <div class="form-group">
+                    <textarea formControlName="contentPost" rows="3" placeholder="¿Que estas pensando?"></textarea>
+                    @if (postForm.get('contentPost')?.invalid && postForm.get('contentPost')?.touched) {
+                        <small class="error-text">El contenido es obligatorio.</small>
+                    }
+                </div>
+
+                <!-- boton para crear -->
+                <div class="form-actions">
+                    <button class="bg-brand px-4 py-2 rounded-xl text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50 mt-2" type="submit" [disabled]="postForm.invalid">Publicar</button>
+                </div>
+            </form>
+        </section>
+
+
+        <!-- sección de publicaciones -->
+        <section class="text-white">
+            <h2>Ultimas publicaciones</h2>
+
+            <div class="post-grid">
+                @for (post of posts; track post.idPost) {
+                    <article class="p-4 bg-card my-2 rounded-xl">
+                        <div class="post-header">
+                            <div class="flex gap-3 items-center ">
+                                <span class="w-10 h-10 rounded-full bg-brand text-white flex items-center justify-center font-bold shadow-sm">{{post.completeNameUser.charAt(0)}}</span>
+                                <strong>{{post.completeNameUser}}</strong>
+                                <span class="category-badge">{{post.nameCategory}}</span>
+                            </div>
+                            <small class="post-date">{{post.publishedAt | date:'medium'}}</small>
+                        </div>
+
+                        <!-- cuerpo de publicacion -->
+                        <h3>{{post.titlePost}}</h3>
+                        <p>{{post.contentPost}}</p>
+
+                        <div class="mt-2">
+                            @if(
+                                currentUser?.roleName === "Admin" ||
+                                currentUser?.roleName === "Moderator" ||
+                                currentUser?.idUser === post.idUser
+                            ){
+                                <button class="bg-brand py-2 px-1 rounded-xl" (click)="deletePost(post.idPost)">
+                                    Eliminar post
+                                </button>
+                            }
+                        </div>
+
+                    </article>
+                }@empty {
+                    <div class="">
+
+                        <p>Aun no hay publicaciones en el muro</p>
+
+                    </div>
+                }
+            </div>
+        </section>
+
+    </main>
+</div>

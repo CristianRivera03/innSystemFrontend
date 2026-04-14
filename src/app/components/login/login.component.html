@@ -1,0 +1,74 @@
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+<div class="bg-main min-h-screen flex justify-center items-center transition-colors duration-300">
+    
+<div class="bg-card grid grid-cols-1 md:grid-cols-2 gap-8 shadow-2xl w-full max-w-5xl p-10 aspect-[16/9] rounded-3xl border border-border-main transition-colors duration-300">
+
+        <!-- formulario -->
+        <div class="px-4 flex flex-col justify-center">
+            <h2 class="font-bold text-2xl text-brand">Login</h2>
+            <p class="text-sm mt-4 text-text-main">Si ya tienes una cuenta puedes acceder con tu correo electrónico</p>
+            
+            <form class="flex flex-col gap-4" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            
+                <div class="mt-8">
+                    <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand" 
+                    type="email" formControlName="email" placeholder="tucorreo@mail.com">
+                    @if(loginForm.get('email')?.invalid && loginForm.get('email')?.touched){
+                        <small class="text-red-500 mt-1 block">Ingresa un correo válido</small>
+                    }
+                </div>
+
+                <div class="relative mt-2">
+                    <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand pr-10" 
+                           type="password" formControlName="password" placeholder="Ingresa tu contraseña">
+                    <span class="material-symbols-outlined absolute top-1/2 right-3 -translate-y-1/2 text-text-muted cursor-pointer hover:text-brand transition-colors">visibility</span>
+                </div>
+        
+                <button class="bg-brand py-2 rounded-xl text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50 mt-2" 
+                        type="submit" [disabled]="loginForm.invalid">
+                    Ingresar
+                </button>
+            </form>  
+        </div>
+
+
+        <!-- imagen -->
+        <div class="sm:block hidden relative">
+            
+            <img 
+              class="absolute inset-0 rounded-2xl h-full w-full object-cover transition-opacity duration-1000 ease-in-out" 
+              src="/photo/login-photo.jpg" 
+              alt="Login Light"
+              [class.opacity-100]="!isDarkMode"
+              [class.opacity-0]="isDarkMode">
+
+            <img 
+              class="absolute inset-0 rounded-2xl h-full w-full object-cover transition-opacity duration-1000 ease-in-out" 
+              src="/photo/login-photo-night.png" 
+              alt="Login Dark"
+              [class.opacity-100]="isDarkMode"
+              [class.opacity-0]="!isDarkMode">
+        </div>
+
+        
+    </div>
+    
+
+    <button 
+        type="button"
+        (click)="toggleTheme()" 
+        class="p-2 rounded-full bg-input border border-border-main shadow-sm hover:opacity-80 transition-all duration-300 flex items-center justify-center">
+        
+        @if(isDarkMode) {
+        <span class="material-symbols-outlined text-yellow-400">light_mode</span>
+        } @else {
+        <span class="material-symbols-outlined text-brand transition-colors">dark_mode</span>
+        }
+    </button>
+</div>
+
+
+
+
+                

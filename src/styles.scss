@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-main: #f9fafb; /* bg-gray-50 */
+    --bg-card: #f3f4f6; /* bg-gray-100 */
+    --bg-input: #ffffff; /* inputs y botones secundarios */
+    --brand: #2a69a5; /* color característico */
+    --text-main: #1f2937; /*  lectura */
+    --text-muted: #9ca3af; /* textos secundarios */
+    --border-main: #e5e7eb; /* Bordes suaves */
+  }
+
+  /* MODO OSCURO (Colores adaptados) */
+  .dark {
+    --bg-main: #0f172a; /* muy oscuro */
+    --bg-card: #1e293b; /* Tarjeta clara  resaltar */
+    --bg-input: #334155; /* Inputs grises oscuros */
+    --brand: #3b82f6; /* principal*/
+    --text-main: #f8fafc; /* Texto casi blanco */
+    --text-muted: #94a3b8; /* Texto secundario claro */
+    --border-main: #475569; /* Bordes visibles pero discretos */
+  }
+}
+
+/* Transición suave al cambiar de tema */
+body {
+  @apply bg-main text-main transition-colors duration-300;
+}
+
+a.active span.material-symbols-outlined {
+    @apply text-white;
+}
+
+/* Scrollbar personalizado para el Main Content (opcional para que se vea pro) */
+main::-webkit-scrollbar {
+    width: 6px;
+}
+main::-webkit-scrollbar-thumb {
+    @apply bg-border-main rounded-full;
+}

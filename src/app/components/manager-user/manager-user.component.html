@@ -1,0 +1,83 @@
+<div class="users-container">
+    <header class="navbar card">
+        <div class="logo">
+            <h1>Conecta2</h1>
+        </div>
+
+        <div class="user-profile">
+            <span>Bienvenido, <strong>{{currentUser?.nameUser}} {{currentUser?.lastNameUser}}</strong></span>
+        </div>
+    </header>
+
+    <main class="">
+
+
+        <!-- listado de usuarios -->
+        <section class="feed-section">
+            <div class="flex justify-between">
+                <h2 class="text-2xl font-bold text-brand tracking-tight">Usuarios Registrados</h2>
+                <button (click)="openRegisterModal()" class="bg-brand font-bold px-3  py-1 text-main   rounded-xl ">Registrar</button>
+                
+                <!-- Modal de registro -->
+                <app-registrer-modal 
+                    [isOpen] = "isRegisterModalOpen"
+                    (onClose) = "closeRegisterModal()">
+                </app-registrer-modal>
+            </div>
+
+            <div class="text-white grid grid-cols-4 gap-2">
+                @for (user of users; track user.idUser) {
+
+                    
+
+                    <!-- Cards de usuarios -->
+                    <article class="bg-card my-2 p-4 rounded-xl">
+                        <div class="flex justify-between">
+      
+                                    <strong>{{user.nameUser}}</strong>
+                                    <strong>{{user.roleName}}</strong>
+
+                        </div>
+
+
+                        <div class="flex justify-around mt-3">
+                            @if(
+                                currentUser?.roleName === "Admin" ||
+                                currentUser?.roleName === "Moderator" ||
+                                currentUser?.idUser === user.idUser
+                            ){
+                            <button class="bg-red-600 px-5 py-1 rounded-xl " (click)="inactiveUser(user.idUser)">
+                                Eliminar usuario
+                            </button>
+
+
+                            <select 
+                                [ngModel] = "user.idRole"
+                                (change)="onChangeUserRole(user.idUser, $event)"
+                                class="w-full md:w-1/2 p-3 rounded-xl border border-border-main bg-input text-text-main focus:ring-2 focus:ring-brand focus:outline-none">
+                            
+                                @for (role of roles; track role.idRole){
+                                    <option class="text-brand"  [value] ="role.idRole">{{ role.nameRol }}</option>
+                                }
+
+                            </select>
+                            }
+                        </div>
+
+                        <tr>
+     
+                    </tr>
+
+                    </article>
+                }@empty {
+                    <div class="empty-state card">
+
+                        <p>Aun no hay usuarios registrados</p>
+
+                    </div>
+                }
+            </div>
+        </section>
+
+    </main>
+</div>
