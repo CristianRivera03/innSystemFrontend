@@ -17,4 +17,4 @@ export interface CreateRoomDTO {
     idRoomType: number;
     idStatus: number;
     description ?: string;
-}*
+}
