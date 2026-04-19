@@ -1,22 +1,25 @@
 export interface UserDTO {
     idUser: string;
-    userName: string;
-    email: string;
-    nameUser: string;
-    lastNameUser: string;
-    roleName: string;
     idRole: number;
-    
+    roleName?: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone?: string;
+    documentId?: string;
+    isActive: boolean;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 export interface UserCreateDTO {
-    userName: string;
+    firstName: string;
+    lastName: string;
     email: string;
-    password : string;
-    nameUser: string;
-    lastNameUser: string;
+    password: string;
+    phone?: string;
+    documentId?: string;
 }
-
 
 export interface ChangeUserRoleDTO{
     idUser : string;

@@ -24,20 +24,20 @@ export const roleGuard: CanActivateFn = (route, state) => {
 
     //verifica si tiene los permisos con los modulos permitidos
     const tienePermiso = user.allowedModules.some(
-      modulo => modulo.path === urlDestino
+      modulo => modulo.frontendPath === urlDestino
     )
 
     if (tienePermiso) {
       return true;
     } else {
       alert("What do you looking for?")
-      const rutaReturn = user.allowedModules[0].path; 
+      const rutaReturn = user.allowedModules[0].frontendPath;
       router.navigate([rutaReturn]);
       return false;
     }
   }
 
   //si no hay session retorna al login
-  router.navigate(["/dashboard/login"]);
+  router.navigate(["/login"]);
   return false;
 };

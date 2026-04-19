@@ -27,10 +27,10 @@
             } -->
 
             <!--  -->
-            @for (modulo of currentUser?.allowedModules; track modulo.id){
-                <a [routerLink]="modulo.path" 
+            @for (modulo of currentUser?.allowedModules; track modulo.idModule){
+                <a [routerLink]="modulo.frontendPath" 
                routerLinkActive="bg-brand text-white shadow-md" 
-               [routerLinkActiveOptions]="{exact: modulo.path === '/dashboard/feed'}"
+               [routerLinkActiveOptions]="{exact: modulo.frontendPath === '/dashboard/feed'}"
                class="flex items-center gap-3 p-3 rounded-xl text-text-main hover:bg-main transition-all duration-200 group">
                <span class="material-symbols-outlined font-medium">{{ modulo.icon }}</span>
                 <span class="font-medium">{{modulo.name}}</span>
@@ -49,11 +49,11 @@
         <div class="p-4 border-t border-border-main bg-main/50 dark:bg-black/10">
             <div class="flex items-center gap-3 p-2">
                 <div class="w-10 h-10 rounded-full bg-brand text-white flex items-center justify-center font-bold shadow-sm">
-                    {{currentUser?.nameUser?.charAt(0)}}
+                    {{currentUser?.firstName?.charAt(0)}}
                 </div>
                 <div class="flex flex-col overflow-hidden">
                     <span class="text-sm font-bold text-text-main truncate">
-                        {{currentUser?.nameUser}} {{currentUser?.lastNameUser}}
+                        {{currentUser?.firstName}} {{currentUser?.lastName}}
                     </span>
                     <span class="text-xs text-text-muted truncate">{{currentUser?.roleName}}</span>
                 </div>

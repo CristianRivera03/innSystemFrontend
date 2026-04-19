@@ -1,6 +1,6 @@
 export interface ModuleDTO {
-    id: number;
-    name : string;
-    path : string;
-    icon : string;
+    idModule: number;
+    name: string;
+    frontendPath: string;
+    icon?: string;
 }

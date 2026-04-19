@@ -1,8 +1,8 @@
 export interface RoleDTO {
     idRole : number;
-    nameRol : string; 
+    roleName : string; 
 }
 
 export interface CreateRoleDTO{
-    nameRol : string;
+    roleName : string;
 }

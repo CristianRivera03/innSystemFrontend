@@ -5,7 +5,7 @@
         </div>
 
         <div class="user-profile">
-            <span>Bienvenido, <strong>{{currentUser?.nameUser}} {{currentUser?.lastNameUser}}</strong></span>
+            <span>Bienvenido, <strong>{{currentUser?.firstName}} {{currentUser?.lastName}}</strong></span>
         </div>
     </header>
 
@@ -34,7 +34,7 @@
                     <article class="bg-card my-2 p-4 rounded-xl">
                         <div class="flex justify-between">
       
-                                    <strong>{{user.nameUser}}</strong>
+                                    <strong>{{user.firstName}}</strong>
                                     <strong>{{user.roleName}}</strong>
 
                         </div>
@@ -57,7 +57,7 @@
                                 class="w-full md:w-1/2 p-3 rounded-xl border border-border-main bg-input text-text-main focus:ring-2 focus:ring-brand focus:outline-none">
                             
                                 @for (role of roles; track role.idRole){
-                                    <option class="text-brand"  [value] ="role.idRole">{{ role.nameRol }}</option>
+                                    <option class="text-brand"  [value] ="role.idRole">{{ role.roleName }}</option>
                                 }
 
                             </select>

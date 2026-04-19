@@ -1,4 +1,4 @@
 export interface UpdatePermissionsDTO {
-    roleId : number;
+    idRole : number;
     moduleIds : number[]; 
 }

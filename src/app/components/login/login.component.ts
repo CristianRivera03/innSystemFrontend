@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { AuthService } from '../../services/auth.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { UserService } from '../../services/user.service';
 
 
 @Component({
@@ -32,7 +32,7 @@ export class LoginComponent implements OnInit {
   }
 
   private fb = inject(FormBuilder);
-  private authService = inject(AuthService);
+  private userService = inject(UserService);
   private router = inject(Router);
 
   // se agregan validaciones 
@@ -45,7 +45,7 @@ export class LoginComponent implements OnInit {
   //Al enviar
   onSubmit() {
     if (this.loginForm.valid) {
-      this.authService.login(this.loginForm.value).subscribe({
+      this.userService.login(this.loginForm.value).subscribe({
         next: (response) => {
           if (response.status === true) {
 

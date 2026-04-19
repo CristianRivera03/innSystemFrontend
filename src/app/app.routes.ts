@@ -7,6 +7,7 @@ import { roleGuard } from './guards/role.guard';
 import { SignUpComponent } from './components/sign-up/sign-up.component';
 import { RoleManagerComponent } from './components/role-manager/role-manager.component';
 import { DatalogComponent } from './components/datalog/datalog.component';
+import { RoomManagementComponent } from './components/room-management/room-management.component';
 
 
 export const routes: Routes = [
@@ -24,6 +25,11 @@ export const routes: Routes = [
 
             { path: 'feed',
                 component: DashboardComponent,
+                canActivate : [roleGuard]
+            },
+
+            {path: 'room-management',
+                component: RoomManagementComponent,
                 canActivate : [roleGuard]
             },
             

@@ -38,7 +38,7 @@ export class RoleService {
 
   updateRolePermission(roleId :number , moduleIds : number[]) : Observable<ResponseAPI<boolean>>{
     const payload : UpdatePermissionsDTO= {
-      roleId : roleId,
+      idRole : roleId,
       moduleIds : moduleIds
     };
     return this.http.post<ResponseAPI<boolean>>(`${this.apiURL}Role/UpdatePermissions`, payload);
@@ -47,7 +47,7 @@ export class RoleService {
   //crear rol
   createRole(nameRol : string) :  Observable<ResponseAPI<RoleDTO>>{
     const payload : CreateRoleDTO = {
-      nameRol : nameRol
+      roleName : nameRol
     };
     return this.http.post<ResponseAPI<RoleDTO>>(`${this.apiURL}Role/Create`,payload);
   }

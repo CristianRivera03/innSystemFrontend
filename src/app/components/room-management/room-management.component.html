@@ -1,0 +1,88 @@
+<div class="p-6 md:p-8">
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-text-main">Gestión de Habitaciones</h1>
+      <p class="text-muted text-sm mt-1">Administra el inventario, precios y estado operativo.</p>
+    </div>
+    
+    <button class="bg-brand text-white px-5 py-2.5 rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center gap-2 shadow-sm">
+      <span class="material-symbols-outlined text-[20px]">add</span>
+      Nueva Habitación
+    </button>
+  </div>
+
+  <div *ngIf="rooms.length === 0" class="bg-card border border-border-main rounded-xl p-12 flex flex-col items-center justify-center text-center">
+    <div class="w-16 h-16 bg-input rounded-full flex items-center justify-center mb-4 shadow-sm border border-border-main">
+      <span class="material-symbols-outlined text-3xl text-muted">bed</span>
+    </div>
+    <h3 class="text-lg font-semibold text-text-main">No hay habitaciones registradas</h3>
+    <p class="text-muted mt-2 max-w-sm">Comienza agregando tu primera habitación para poder empezar a recibir reservas.</p>
+  </div>
+
+  <div *ngIf="rooms.length > 0" class="bg-card border border-border-main rounded-xl overflow-hidden shadow-sm">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-input text-muted text-xs uppercase tracking-wider border-b border-border-main">
+            <th class="p-4 font-semibold">Habitación</th>
+            <th class="p-4 font-semibold">Tipo</th>
+            <th class="p-4 font-semibold">Precio Base</th>
+            <th class="p-4 font-semibold">Capacidad</th>
+            <th class="p-4 font-semibold">Estado Operativo</th>
+            <th class="p-4 font-semibold text-right">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="text-text-main divide-y divide-border-main">
+          
+          <tr *ngFor="let room of rooms" class="hover:bg-input transition-colors duration-200">
+            
+            <td class="p-4">
+              <div class="font-bold text-brand">#{{ room.roomNumber }}</div>
+            </td>
+            
+            <td class="p-4">
+              <span class="px-2.5 py-1 bg-main border border-border-main rounded-md text-xs font-medium">
+                {{ room.roomType }}
+              </span>
+            </td>
+            
+            <td class="p-4 font-medium">
+              ${{ room.basePrice | number:'1.2-2' }}
+            </td>
+            
+            <td class="p-4">
+              <div class="flex items-center gap-1.5 text-muted">
+                <span class="material-symbols-outlined text-[18px]">group</span>
+                <span class="font-medium text-text-main">{{ room.guestCapacity }}</span>
+              </div>
+            </td>
+            
+            <td class="p-4">
+              <span class="px-2.5 py-1 rounded-full text-xs font-bold"
+                    [ngClass]="{
+                      'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400': room.operationalStatus === 'Active',
+                      'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-400': room.operationalStatus === 'Maintenance',
+                      'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400': room.operationalStatus === 'Inactive'
+                    }">
+                {{ room.operationalStatus === 'Active' ? 'Activa' : 
+                   room.operationalStatus === 'Maintenance' ? 'Mantenimiento' : 'Inactiva' }}
+              </span>
+            </td>
+            
+            <td class="p-4 text-right">
+              <div class="flex items-center justify-end gap-2">
+                <button class="p-1.5 text-muted hover:text-brand bg-transparent hover:bg-main rounded-md transition-all" title="Editar habitación">
+                  <span class="material-symbols-outlined text-[20px]">edit_square</span>
+                </button>
+                <button class="p-1.5 text-muted hover:text-red-500 bg-transparent hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-all" title="Dar de baja">
+                  <span class="material-symbols-outlined text-[20px]">delete</span>
+                </button>
+              </div>
+            </td>
+            
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -43,7 +43,7 @@
         <option value="0">-- Seleccione un rol --</option>
         
         @for (role of roles; track role.idRole) {
-          <option [value]="role.idRole">{{ role.nameRol }}</option>
+          <option [value]="role.idRole">{{ role.roleName }}</option>
         }
       </select>
     </div>
@@ -57,24 +57,24 @@
         </div>
       } @else {
         
-        @for (modulo of modules; track modulo.id) {
+        @for (modulo of modules; track modulo.idModule) {
           <div class="flex items-center justify-between p-4 border-b border-border-main hover:bg-main/50 transition-colors last:border-b-0">
             
             <div class="flex items-center gap-3">
               <span class="material-symbols-outlined text-text-muted">{{ modulo.icon }}</span>
               <div>
                 <p class="font-bold text-text-main">{{ modulo.name }}</p>
-                <p class="text-xs text-text-muted">Ruta protegida: {{ modulo.path }}</p>
+                <p class="text-xs text-text-muted">Ruta protegida: {{ modulo.frontendPath }}</p>
               </div>
             </div>
 
             <label class="relative inline-flex items-center cursor-pointer">
               <input 
                 type="checkbox" 
-                [id]="'switch-' + modulo.id"
+                [id]="'switch-' + modulo.idModule"
                 class="sr-only peer"
-                [checked]="selectedModuleIds.includes(modulo.id)"
-                (change)="toggleModule(modulo.id)">
+                [checked]="selectedModuleIds.includes(modulo.idModule)"
+                (change)="toggleModule(modulo.idModule)">
               
               <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand"></div>
             </label>

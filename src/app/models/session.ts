@@ -2,11 +2,9 @@ import { ModuleDTO } from "./module";
 
 export interface SessionDTO {
     idUser: string;
-    userName: string;
+    firstName: string;
+    lastName: string;
     email: string;
-    nameUser: string;
-    lastNameUser: string;
-    roleName: string;
-    allowedModules : ModuleDTO[]
-
+    roleName?: string;
+    allowedModules: ModuleDTO[];
 }

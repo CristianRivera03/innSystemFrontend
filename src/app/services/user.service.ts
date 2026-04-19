@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment.development';
 import { ChangeUserRoleDTO, UserCreateDTO, UserDTO } from '../models/user';
 import { ResponseAPI } from '../models/response-api';
+import { LoginDTO } from '../models/login';
 
 
 @Injectable({
@@ -20,6 +21,11 @@ export class UserService {
 
 
   constructor() { }
+
+  login(credentials : LoginDTO) : Observable<any>{
+      return this.http.post(`${this.apiURL}/login` , credentials)
+    }
+
 
   //Obtener users
   getAllUsers(): Observable<UserDTO[]> {
