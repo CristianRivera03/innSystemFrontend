@@ -7,7 +7,6 @@ import { SessionDTO } from '../../models/session';
   standalone: true,
   imports: [RouterOutlet, RouterModule],
   templateUrl: './layout.component.html',
-  styleUrl: './layout.component.scss'
 })
 export class LayoutComponent implements OnInit {
   //inyecciones

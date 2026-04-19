@@ -11,7 +11,6 @@ import { SessionDTO } from '../../models/session';
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.scss'
 })
 
 export class DashboardComponent {

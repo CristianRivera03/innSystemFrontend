@@ -12,5 +12,5 @@ export interface RoomTypeDTO{
 
 export interface CatalogDTO {
     roomTypes: RoomTypeDTO[];
-    RoomStatuses: StatusDTO[];
+    roomStatuses: StatusDTO[];
 }

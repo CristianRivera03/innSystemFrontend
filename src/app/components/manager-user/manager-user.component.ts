@@ -17,7 +17,6 @@ import { errorContext } from 'rxjs/internal/util/errorContext';
   standalone: true,
   imports: [RegistrerModalComponent, ReactiveFormsModule, CommonModule, FormsModule],
   templateUrl: './manager-user.component.html',
-  styleUrl: './manager-user.component.scss'
 })
 
 
@@ -41,9 +40,6 @@ export class ManagerUserComponent {
       this.loadRoles();
     }
   }
-
-
-
 
   //Cargar session 
   loadUserSession() {
@@ -85,7 +81,6 @@ export class ManagerUserComponent {
   }
 
   onChangeUserRole(userId: string, event: any) {
-
     const newRoleId = Number(event.target.value);
     if (confirm("Estas seguro de modificar este usuario?")) {
       this.userService.changeUserRole(userId, newRoleId).subscribe({

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment.development';
 import { ResponseAPI } from '../models/response-api';
 import { CreateRoomDTO, RoomDTO } from '../models/room';
+import{ RoomUpdateDTO } from '../models/room';
 
 
 @Injectable({
@@ -27,5 +28,11 @@ export class RoomService {
   createRoom(payload : CreateRoomDTO) : Observable<ResponseAPI<RoomDTO>>{
     return this.http.post<ResponseAPI<RoomDTO>>(`${this.apiURL}`, payload)
   }
+
+  //actualizar habitacion
+  updateRoom(payload : RoomUpdateDTO) : Observable<ResponseAPI<RoomDTO>>{
+    return this.http.put<ResponseAPI<RoomDTO>>(`${this.apiURL}/${payload.idRoom}`, payload)
+  }
+
 
 }

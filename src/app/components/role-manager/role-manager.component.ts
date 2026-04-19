@@ -12,7 +12,6 @@ import { errorContext } from 'rxjs/internal/util/errorContext';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './role-manager.component.html',
-  styleUrl: './role-manager.component.scss'
 })
 export class RoleManagerComponent implements OnInit {
 

@@ -9,7 +9,6 @@ import { UserService } from '../../services/user.service';
   standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
 })
 
 export class LoginComponent implements OnInit {

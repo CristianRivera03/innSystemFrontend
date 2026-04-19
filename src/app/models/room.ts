@@ -18,3 +18,10 @@ export interface CreateRoomDTO {
     idStatus: number;
     description ?: string;
 }
+
+
+export interface RoomUpdateDTO {
+    idRoom: number;
+    idStatus : number;
+    description ?: string;
+}

@@ -7,7 +7,6 @@ import { UserService } from '../../../services/user.service';
   selector: 'app-registrer-modal',
   imports: [ReactiveFormsModule],
   templateUrl: './registrer-modal.component.html',
-  styleUrl: './registrer-modal.component.scss'
 })
 export class RegistrerModalComponent implements OnInit {
 

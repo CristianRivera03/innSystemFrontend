@@ -1,1 +1,72 @@
-<p>room-create-modal works!</p>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+@if (isOpen) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
+    <div class="bg-card w-full max-w-lg rounded-2xl shadow-2xl border border-border-main relative p-8 animate-slide-up">
+      
+      <button 
+          (click)="closeModal()" 
+          class="absolute top-4 right-4 text-text-muted hover:text-red-500 transition-colors">
+          <span class="material-symbols-outlined">close</span>
+      </button>
+  
+      <div class="mb-6">
+          <h2 class="text-2xl font-bold text-center text-brand mb-4">Nueva Habitación</h2>
+          
+          <form class="flex flex-col gap-1" [formGroup]="roomForm" (ngSubmit)="onSubmit()">
+              <div class="flex flex-col">
+  
+                  <div class="h-20 flex flex-col justify-start">
+                      <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand" 
+                      type="text" formControlName="roomNumber" placeholder="Número de Habitación (Ej. 101)">
+                      
+                      @if(roomForm.get('roomNumber')?.invalid && roomForm.get('roomNumber')?.touched){
+                          <small class="text-red-500 mt-1 block animate-fade-in">Ingresa el número de habitación</small>
+                      }
+                  </div>
+  
+                  <div class="h-20 flex flex-col justify-start">
+                      <select class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full focus:outline-none focus:ring-2 focus:ring-brand appearance-none" 
+                      formControlName="idRoomType">
+                          <option value="" disabled selected>Selecciona un tipo de cuarto</option>
+                          
+                          @for (type of catalogs?.roomTypes; track type.idRoomType) {
+                            <option [value]="type.idRoomType">{{ type.name }} (${{ type.basePrice }})</option>
+                          }
+                      </select>
+                      
+                      @if(roomForm.get('idRoomType')?.invalid && roomForm.get('idRoomType')?.touched){
+                          <small class="text-red-500 mt-1 block animate-fade-in">Selecciona un tipo válido</small>
+                      }
+                  </div>
+  
+                  <div class="h-20 flex flex-col justify-start">
+                      <select class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full focus:outline-none focus:ring-2 focus:ring-brand appearance-none" 
+                      formControlName="idStatus">
+                          @for (status of catalogs?.roomStatuses; track status.id) {
+                            <option [value]="status.id">{{ status.name }}</option>
+                          }
+                      </select>
+                  </div> 
+  
+                  <div class="h-28 flex flex-col justify-start">
+                      <textarea class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand resize-none" 
+                      formControlName="description" rows="3" placeholder="Descripción de la habitación (Opcional)..."></textarea>
+                  </div>
+                  
+              </div>  
+  
+              <button class="bg-brand py-2 rounded-xl text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50 mt-2 flex justify-center items-center gap-2" 
+                      type="submit" [disabled]="roomForm.invalid || isLoading">
+                      @if (isLoading) {
+                        <span class="material-symbols-outlined animate-spin">progress_activity</span>
+                        Cargando...
+                      } @else {
+                        Guardar Habitación
+                      }
+              </button>
+          </form>  
+      </div>
+    </div>
+  </div>
+}

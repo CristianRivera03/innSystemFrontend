@@ -5,25 +5,28 @@ import { RoomService } from '../../../services/room.service';
 import { CatalogDTO } from '../../../models/catalog';
 import { CreateRoomDTO } from '../../../models/room';
 import { ResponseAPI } from '../../../models/response-api';
-import { elementAt } from 'rxjs';
+
 
 @Component({
   selector: 'app-room-create-modal',
   imports: [ReactiveFormsModule],
   templateUrl: './room-create-modal.component.html',
-  styleUrl: './room-create-modal.component.scss'
 })
 export class RoomCreateModalComponent implements OnInit {
-
-
-  //Eventos para comunicar 
-  @Output() closeModal = new EventEmitter<void>();
-  @Output() roomCreate = new EventEmitter<void>();
-
+  
   private fb = inject(FormBuilder);
   private catalogService = inject(CatalogService);
   private roomService = inject(RoomService);
   isDarkMode: boolean = false;
+
+  //Eventos para comunicar 
+  @Input() isOpen: boolean = false;
+  @Output() onClose = new EventEmitter<void>();
+  @Output() roomCreate = new EventEmitter<void>();
+
+  closeModal() {
+    this.onClose.emit(); // dispara el evento
+  }
 
 
   roomForm: FormGroup;
@@ -72,6 +75,7 @@ export class RoomCreateModalComponent implements OnInit {
     });
   };
 
+
   //Envio de formulario
   onSubmit() : void{
     if(this.roomForm.invalid){
@@ -96,7 +100,8 @@ export class RoomCreateModalComponent implements OnInit {
       next : (response) => {
         if(response.status){
           this.roomCreate.emit(); //notificar al padre que se creo la sala
-          this.closeModal.emit();
+          this.closeModal();
+          this.roomForm.reset({ idStatus: 1 }); // Limpiar campos del formulario
         } else{
           alert("Error al crear la habitación");
         }
