@@ -11,13 +11,15 @@
       </button>
   
       <div class="mb-6">
-          <h2 class="text-2xl font-bold text-center text-brand mb-4">Nueva Habitación</h2>
+          <h2 class="text-2xl font-bold text-center text-brand mb-4">
+              {{ roomToEdit ? 'Editar Habitación' : 'Nueva Habitación' }}
+          </h2>
           
           <form class="flex flex-col gap-1" [formGroup]="roomForm" (ngSubmit)="onSubmit()">
               <div class="flex flex-col">
   
                   <div class="h-20 flex flex-col justify-start">
-                      <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand" 
+                      <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand disabled:opacity-50" 
                       type="text" formControlName="roomNumber" placeholder="Número de Habitación (Ej. 101)">
                       
                       @if(roomForm.get('roomNumber')?.invalid && roomForm.get('roomNumber')?.touched){
@@ -26,7 +28,7 @@
                   </div>
   
                   <div class="h-20 flex flex-col justify-start">
-                      <select class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full focus:outline-none focus:ring-2 focus:ring-brand appearance-none" 
+                      <select class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full focus:outline-none focus:ring-2 focus:ring-brand appearance-none disabled:opacity-50" 
                       formControlName="idRoomType">
                           <option value="" disabled selected>Selecciona un tipo de cuarto</option>
                           
@@ -58,11 +60,11 @@
   
               <button class="bg-brand py-2 rounded-xl text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50 mt-2 flex justify-center items-center gap-2" 
                       type="submit" [disabled]="roomForm.invalid || isLoading">
-                      @if (isLoading) {
+                      @if (isLoading || isSaving) {
                         <span class="material-symbols-outlined animate-spin">progress_activity</span>
-                        Cargando...
+                        {{ roomToEdit ? 'Actualizando...' : 'Guardando...' }}
                       } @else {
-                        Guardar Habitación
+                        {{ roomToEdit ? 'Actualizar Habitación' : 'Guardar Habitación' }}
                       }
               </button>
           </form>  

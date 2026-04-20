@@ -22,6 +22,7 @@ export interface CreateRoomDTO {
 
 export interface RoomUpdateDTO {
     idRoom: number;
+    idRoomType: number;
     idStatus : number;
     description ?: string;
 }

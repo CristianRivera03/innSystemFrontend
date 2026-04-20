@@ -1,19 +1,19 @@
-import { Component, Input, Output, EventEmitter, OnInit, inject, output } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, inject, output, SimpleChange, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CatalogService } from '../../../services/catalog.service';
 import { RoomService } from '../../../services/room.service';
 import { CatalogDTO } from '../../../models/catalog';
-import { CreateRoomDTO } from '../../../models/room';
+import { CreateRoomDTO, RoomDTO, RoomUpdateDTO } from '../../../models/room';
 import { ResponseAPI } from '../../../models/response-api';
-
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-room-create-modal',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './room-create-modal.component.html',
 })
 export class RoomCreateModalComponent implements OnInit {
-  
+
   private fb = inject(FormBuilder);
   private catalogService = inject(CatalogService);
   private roomService = inject(RoomService);
@@ -21,8 +21,9 @@ export class RoomCreateModalComponent implements OnInit {
 
   //Eventos para comunicar 
   @Input() isOpen: boolean = false;
+  @Input() roomToEdit: RoomDTO | null = null; // Para edición, si es null se asume creación
   @Output() onClose = new EventEmitter<void>();
-  @Output() roomCreate = new EventEmitter<void>();
+  @Output() onSuccess = new EventEmitter<void>();
 
   closeModal() {
     this.onClose.emit(); // dispara el evento
@@ -76,43 +77,101 @@ export class RoomCreateModalComponent implements OnInit {
   };
 
 
+  ngOnChanges(changes: SimpleChanges): void {
+    // Si se recibe una habitación para editar, cargar sus datos en el formulario
+    if (changes['isOpen'] && this.isOpen) {
+
+      //para editar habitacion y hay una habitacion seleccionada
+      if (this.roomToEdit) {
+
+        this.roomForm.patchValue({
+
+          roomNumber: this.roomToEdit.roomNumber,
+          idRoomType: this.roomToEdit.idRoomType,
+          description: this.roomToEdit.description,
+          idStatus: this.roomToEdit.idStatus,
+
+        });
+
+        //Desahabilitar campos que no se pueden editar
+        this.roomForm.get('roomNumber')?.disable();
+        this.roomForm.get('idRoomType')?.disable();
+
+
+      } else {
+        //Si no hay habitacion seleccionada, se asume que es creación
+        this.roomForm.reset({ idStatus: 1 });
+        this.roomForm.get('roomNumber')?.enable();
+        this.roomForm.get('idRoomType')?.enable();
+      }
+    }
+  }
+
   //Envio de formulario
-  onSubmit() : void{
-    if(this.roomForm.invalid){
+  onSubmit(): void {
+    if (this.roomForm.invalid) {
       this.roomForm.markAllAsTouched();
       return;
     }
 
     this.isSaving = true;
 
-    //preparar el payload
+    if (this.roomToEdit) {
+      // Logica de actualización de habitacion
+      const updatePayload: RoomUpdateDTO = {
+        idRoom: this.roomToEdit.idRoom,
+        idRoomType: Number(this.roomForm.getRawValue().idRoomType),
+        idStatus: Number(this.roomForm.getRawValue().idStatus),
+        description: this.roomForm.getRawValue().description,
+      };
 
-    const newRoom: CreateRoomDTO = {
-      roomNumber: this.roomForm.value.roomNumber,
-      idRoomType: Number(this.roomForm.value.idRoomType),
-      idStatus: Number(this.roomForm.value.idStatus),
-      description: this.roomForm.value.description,
-    };
-
-
-    //se envia el formulario
-    this.roomService.createRoom(newRoom).subscribe({
-      next : (response) => {
-        if(response.status){
-          this.roomCreate.emit(); //notificar al padre que se creo la sala
-          this.closeModal();
-          this.roomForm.reset({ idStatus: 1 }); // Limpiar campos del formulario
-        } else{
-          alert("Error al crear la habitación");
+      this.roomService.updateRoom(updatePayload).subscribe({
+        next: (response) => {
+          if (response.status) {
+            this.onSuccess.emit(); // notificar al padre
+            this.closeModal();
+            this.roomForm.reset({ idStatus: 1 });
+            this.roomForm.get('roomNumber')?.enable();
+            this.roomForm.get('idRoomType')?.enable();
+          } else {
+            alert("Error al actualizar la habitación");
+          }
+          this.isSaving = false;
+        },
+        error: (err) => {
+          console.error("Error al actualizar la habitación", err);
+          alert("No se pudo actualizar la habitación");
+          this.isSaving = false;
         }
-        this.isSaving = false;
-      },
-      error: (err) => {
-        console.error("Error al crear la habitación", err);
-        alert("No se pudo crear la habitación");
-        this.isSaving = false;
-      }
-    });
+      });
+    } else {
+      // Lógica de creación de habitación (preparar el payload)
+      const newRoom: CreateRoomDTO = {
+        roomNumber: this.roomForm.value.roomNumber,
+        idRoomType: Number(this.roomForm.value.idRoomType),
+        idStatus: Number(this.roomForm.value.idStatus),
+        description: this.roomForm.value.description,
+      };
+
+      // se envia el formulario
+      this.roomService.createRoom(newRoom).subscribe({
+        next: (response) => {
+          if (response.status) {
+            this.onSuccess.emit(); //notificar al padre que se creo la sala
+            this.closeModal();
+            this.roomForm.reset({ idStatus: 1 }); // Limpiar campos del formulario
+          } else {
+            alert("Error al crear la habitación");
+          }
+          this.isSaving = false;
+        },
+        error: (err) => {
+          console.error("Error al crear la habitación", err);
+          alert("No se pudo crear la habitación");
+          this.isSaving = false;
+        }
+      });
+    }
   }
 
 

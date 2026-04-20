@@ -34,5 +34,10 @@ export class RoomService {
     return this.http.put<ResponseAPI<RoomDTO>>(`${this.apiURL}/${payload.idRoom}`, payload)
   }
 
+  //Soft delete habitacion (cambiar estatus a inactiva)
+  inactivateRoom(idRoom : number) : Observable<ResponseAPI<RoomDTO>>{
+    return this.http.delete<ResponseAPI<RoomDTO>>(`${this.apiURL}/${idRoom}`)
+  }
+
 
 }

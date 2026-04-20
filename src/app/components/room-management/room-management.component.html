@@ -5,11 +5,7 @@
       <p class="text-muted text-sm mt-1">Administra el inventario, precios y estado operativo.</p>
     </div>
 
-    <app-room-create-modal
-      [isOpen]="isCreateModalOpen"
-      (onClose)="closeRegistrerModal()"
-      (roomCreate)="loadRooms()">
-    </app-room-create-modal>
+
     
     <button (click)="openCreateModal()" class="bg-brand text-white px-5 py-2.5 rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center gap-2 shadow-sm">
       <span class="material-symbols-outlined text-[20px]">add</span>
@@ -81,10 +77,10 @@
             
             <td class="p-4 text-right">
               <div class="flex items-center justify-end gap-2">
-                <button class="p-1.5 text-muted hover:text-brand bg-transparent hover:bg-main rounded-md transition-all" title="Editar habitación">
+                <button (click)="openUpdateModal(room)" class="p-1.5 text-muted hover:text-brand bg-transparent hover:bg-main rounded-md transition-all" title="Editar habitación">
                   <span class="material-symbols-outlined text-[20px]">edit_square</span>
                 </button>
-                <button class="p-1.5 text-muted hover:text-red-500 bg-transparent hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-all" title="Dar de baja">
+                <button (click)="inactivateRoom(room)" class="p-1.5 text-muted hover:text-red-500 bg-transparent hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-all" title="Dar de baja">
                   <span class="material-symbols-outlined text-[20px]">delete</span>
                 </button>
               </div>
@@ -97,3 +93,14 @@
   </div>
 </div>
 
+
+
+
+    <app-room-create-modal
+      [isOpen]="isCreateModalOpen"
+      [roomToEdit]="selectedRoom"
+      (onClose)="closeRegistrerModal()"
+      (onSuccess)="loadRooms()">
+    </app-room-create-modal>
+
+    
