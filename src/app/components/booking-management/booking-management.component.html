@@ -86,13 +86,22 @@
 
             <td class="p-4 text-right">
               <div class="flex items-center justify-end gap-2">
+                
+                <!-- Quick action: Confirm -->
                 <button *ngIf="booking.status === 'Pending'" (click)="updateStatus(booking.idBooking, 2)" class="p-1.5 text-green-600 hover:bg-green-50 rounded-md transition-all" title="Confirmar Reserva">
                   <span class="material-symbols-outlined text-[20px]">check_circle</span>
                 </button>
                 
+                <!-- Quick action: Cancel -->
                 <button *ngIf="booking.status === 'Pending' || booking.status === 'Confirmed'" (click)="updateStatus(booking.idBooking, 4)" class="p-1.5 text-red-600 hover:bg-red-50 rounded-md transition-all" title="Cancelar Reserva">
                   <span class="material-symbols-outlined text-[20px]">cancel</span>
                 </button>
+
+                <!-- Edit Status via Modal -->
+                <button (click)="openUpdateModal(booking)" class="p-1.5 text-blue-600 hover:bg-blue-50 rounded-md transition-all" title="Editar Estado">
+                  <span class="material-symbols-outlined text-[20px]">edit</span>
+                </button>
+
               </div>
             </td>
             
@@ -102,3 +111,10 @@
     </div>
   </div>
 </div>
+
+<app-booking-management-modal
+  [isOpen]="isModalOpen"
+  [bookingToEdit]="selectedBooking"
+  (onClose)="closeModal()"
+  (onSuccess)="onModalSuccess()">
+</app-booking-management-modal>

@@ -2,13 +2,12 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BookingService } from '../../services/booking.service';
 import { BookingDTO } from '../../models/booking';
-// Importaremos el modal cuando lo creemos en el siguiente paso
-// import { BookingCreateModalComponent } from '../booking-create-modal/booking-create-modal.component'; 
+import { BookingManagementModalComponent } from '../modals/booking-management-modal/booking-management-modal.component'; 
 
 @Component({
   selector: 'app-booking-management',
   standalone: true,
-  imports: [CommonModule], // Agregar el modal aquí después
+  imports: [CommonModule, BookingManagementModalComponent],
   templateUrl: './booking-management.component.html'
 })
 export class BookingManagementComponent implements OnInit {
@@ -20,6 +19,7 @@ export class BookingManagementComponent implements OnInit {
   
   // Variables para el Modal
   isModalOpen: boolean = false;
+  selectedBooking: BookingDTO | null = null;
 
   ngOnInit(): void {
     this.loadBookings();
@@ -44,11 +44,22 @@ export class BookingManagementComponent implements OnInit {
   }
 
   openCreateModal() {
+    this.selectedBooking = null;
+    this.isModalOpen = true;
+  }
+
+  openUpdateModal(booking: BookingDTO) {
+    this.selectedBooking = booking;
     this.isModalOpen = true;
   }
 
   closeModal() {
     this.isModalOpen = false;
+    this.selectedBooking = null;
+  }
+
+  onModalSuccess() {
+    this.loadBookings();
   }
 
   // Método rápido para cambiar estado (Ej: 2 = Confirmada, 4 = Cancelada)

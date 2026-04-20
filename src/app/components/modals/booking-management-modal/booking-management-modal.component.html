@@ -1,1 +1,110 @@
-<p>booking-management-modal works!</p>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+@if (isOpen) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
+    <div class="bg-card w-full max-w-lg rounded-2xl shadow-2xl border border-border-main relative p-8 animate-slide-up max-h-[90vh] overflow-y-auto">
+      
+      <button 
+          (click)="closeModal()" 
+          class="absolute top-4 right-4 text-text-muted hover:text-red-500 transition-colors">
+          <span class="material-symbols-outlined">close</span>
+      </button>
+  
+      <div class="mb-6">
+          <h2 class="text-2xl font-bold text-center text-brand mb-4">
+              {{ bookingToEdit ? 'Editar Estado de Reserva' : 'Nueva Reserva' }}
+          </h2>
+          
+          <form class="flex flex-col gap-1" [formGroup]="bookingForm" (ngSubmit)="onSubmit()">
+              <div class="flex flex-col">
+  
+                  <!-- Cliente (User) -->
+                  <div class="h-20 flex flex-col justify-start">
+                      <select class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full focus:outline-none focus:ring-2 focus:ring-brand appearance-none disabled:opacity-50" 
+                      formControlName="idUser">
+                          <option value="" disabled selected>Selecciona un cliente</option>
+                          @for (user of users; track user.idUser) {
+                            <option [value]="user.idUser">{{ user.firstName }} {{ user.lastName }}</option>
+                          }
+                      </select>
+                      
+                      @if(bookingForm.get('idUser')?.invalid && bookingForm.get('idUser')?.touched){
+                          <small class="text-red-500 mt-1 block animate-fade-in">Selecciona el cliente</small>
+                      }
+                  </div>
+  
+                  <!-- Habitación (Room) -->
+                  <div class="h-20 flex flex-col justify-start">
+                      <select class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full focus:outline-none focus:ring-2 focus:ring-brand appearance-none disabled:opacity-50" 
+                      formControlName="idRoom">
+                          <option value="" disabled selected>Selecciona una habitación</option>
+                          @for (room of rooms; track room.idRoom) {
+                            <option [value]="room.idRoom">Habitación {{ room.roomNumber }}</option>
+                          }
+                      </select>
+                      
+                      @if(bookingForm.get('idRoom')?.invalid && bookingForm.get('idRoom')?.touched){
+                          <small class="text-red-500 mt-1 block animate-fade-in">Selecciona una habitación</small>
+                      }
+                  </div>
+
+                  <!-- Fecha Check-In -->
+                  <div class="h-20 flex flex-col justify-start">
+                      <label class="text-sm font-semibold mb-1 text-text-main">Fecha Check-In</label>
+                      <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full focus:outline-none focus:ring-2 focus:ring-brand disabled:opacity-50" 
+                      type="date" formControlName="checkIn">
+                      
+                      @if(bookingForm.get('checkIn')?.invalid && bookingForm.get('checkIn')?.touched){
+                          <small class="text-red-500 mt-1 block animate-fade-in">Fecha requerida</small>
+                      }
+                  </div>
+
+                  <!-- Fecha Check-Out -->
+                  <div class="h-20 flex flex-col justify-start">
+                      <label class="text-sm font-semibold mb-1 text-text-main">Fecha Check-Out</label>
+                      <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full focus:outline-none focus:ring-2 focus:ring-brand disabled:opacity-50" 
+                      type="date" formControlName="checkOut">
+                      
+                      @if(bookingForm.get('checkOut')?.invalid && bookingForm.get('checkOut')?.touched){
+                          <small class="text-red-500 mt-1 block animate-fade-in">Fecha requerida</small>
+                      }
+                  </div>
+
+                  <!-- Huéspedes -->
+                  <div class="h-20 flex flex-col justify-start">
+                      <label class="text-sm font-semibold mb-1 text-text-main">Número de Huéspedes</label>
+                      <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full focus:outline-none focus:ring-2 focus:ring-brand disabled:opacity-50" 
+                      type="number" formControlName="guestsCount" min="1">
+                      
+                      @if(bookingForm.get('guestsCount')?.invalid && bookingForm.get('guestsCount')?.touched){
+                          <small class="text-red-500 mt-1 block animate-fade-in">Debe ser al menos 1</small>
+                      }
+                  </div>
+
+                  <!-- Estado (Status) - Visible en Edición o por Defecto Deshabilitado -->
+                  <div class="h-20 flex flex-col justify-start">
+                      <label class="text-sm font-semibold mb-1 text-text-main">Estado Reserva</label>
+                      <select class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full focus:outline-none focus:ring-2 focus:ring-brand appearance-none disabled:opacity-50" 
+                      formControlName="idStatus">
+                          @for (status of bookingStatuses; track status.id) {
+                            <option [value]="status.id">{{ status.name }}</option>
+                          }
+                      </select>
+                  </div>
+                  
+              </div>  
+  
+              <button class="bg-brand py-2 rounded-xl text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50 mt-2 flex justify-center items-center gap-2" 
+                      type="submit" [disabled]="bookingForm.invalid || isLoading || isSaving">
+                      @if (isLoading || isSaving) {
+                        <span class="material-symbols-outlined animate-spin">progress_activity</span>
+                        {{ bookingToEdit ? 'Actualizando...' : 'Guardando...' }}
+                      } @else {
+                        {{ bookingToEdit ? 'Actualizar Estado' : 'Guardar Reserva' }}
+                      }
+              </button>
+          </form>  
+      </div>
+    </div>
+  </div>
+}
