@@ -16,12 +16,12 @@ import { errorContext } from 'rxjs/internal/util/errorContext';
   selector: 'app-manager-user',
   standalone: true,
   imports: [RegistrerModalComponent, ReactiveFormsModule, CommonModule, FormsModule],
-  templateUrl: './manager-user.component.html',
+  templateUrl: './user-management.component.html',
 })
 
 
 //Clase
-export class ManagerUserComponent {
+export class UserManagementComponent {
   //usuario actual
   private router = inject(Router);
   private userService = inject(UserService);
@@ -113,14 +113,24 @@ export class ManagerUserComponent {
     }
   }
 
-  //Función para abrir
+  userToEdit: UserDTO | null = null;
+
+  //Función para abrir registro
   openRegisterModal() {
+    this.userToEdit = null;
+    this.isRegisterModalOpen = true;
+  }
+
+  //Función para abrir edit
+  openEditModal(user: UserDTO) {
+    this.userToEdit = user;
     this.isRegisterModalOpen = true;
   }
 
   //Función para cerrar
   closeRegisterModal() {
     this.isRegisterModalOpen = false;
+    this.userToEdit = null;
   }
 
 

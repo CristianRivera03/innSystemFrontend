@@ -11,9 +11,9 @@ import { errorContext } from 'rxjs/internal/util/errorContext';
   selector: 'app-role-manager',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './role-manager.component.html',
+  templateUrl: './role-management.component.html',
 })
-export class RoleManagerComponent implements OnInit {
+export class RoleManagementComponent implements OnInit {
 
   private roleService = inject(RoleService);
 

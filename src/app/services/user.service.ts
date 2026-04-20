@@ -5,6 +5,7 @@ import { environment } from '../../environments/environment.development';
 import { ChangeUserRoleDTO, UserCreateDTO, UserDTO } from '../models/user';
 import { ResponseAPI } from '../models/response-api';
 import { LoginDTO } from '../models/login';
+import { UserUpdateDTO } from '../models/user';
 
 
 @Injectable({
@@ -29,7 +30,7 @@ export class UserService {
 
   //Obtener users
   getAllUsers(): Observable<UserDTO[]> {
-    return this.http.get<UserDTO[]>(`${this.apiURL}/Get`)
+    return this.http.get<UserDTO[]>(`${this.apiURL}`)
   }
 
   //Regfistro pide un UserCreate y devuelve un user normal porque si devuelve un create 
@@ -55,6 +56,11 @@ export class UserService {
       idRole : idRole
     };
     return this.http.put<ResponseAPI<boolean>>(`${this.apiURL}/ChangeRole`,payload);
+  }
+
+  //Actualizar user
+  updateUser(idUser: string, userData: UserUpdateDTO): Observable<ResponseAPI<boolean>> {
+    return this.http.put<ResponseAPI<boolean>>(`${this.apiURL}/Update/${idUser}`, userData);
   }
 
 }

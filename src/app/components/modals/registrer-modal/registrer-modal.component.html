@@ -1,9 +1,8 @@
-
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
 
 @if (isOpen) {
-  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
-    <div class="bg-card w-full max-w-lg rounded-2xl shadow-2xl border border-border-main relative p-8 animate-slide-up">
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in overflow-y-auto">
+    <div class="bg-card w-full max-w-lg rounded-2xl shadow-2xl border border-border-main relative p-8 animate-slide-up my-auto">
     
     <button 
         (click)="closeModal()" 
@@ -12,71 +11,99 @@
     </button>
 
     <div class="mb-6">
-        <h2 class="text-2xl  font-bold text-center text-brand mb-4">Crear Cuenta</h2>
+        <h2 class="text-2xl font-bold text-center text-brand mb-4">{{ userToEdit ? 'Actualizar Usuario' : 'Registrar Usuario' }}</h2>
         <form class="flex flex-col gap-1" [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
 
             <div class="flex flex-col">
 
                 <div class="h-20 flex flex-col justify-start">
-                    <!-- Username -->
-                    <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand" 
-                    type="text" formControlName="userName" placeholder="Ingresa tu nombre de usuario ex. DanexDR Criis203">
-                    @if(signUpForm.get('userName')?.invalid && signUpForm.get('userName')?.touched){
-                        <small class="text-red-500 mt-1 block">Ingresa tu nombre de usuario</small>
-                    }
-
-                </div>
-                    
-                <div class="h-20 flex flex-col justify-start">
-
-                    <!-- Primer nombre -->
-                    <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand" 
-                    type="text" formControlName="nameUser" placeholder="Ingresa tu nombre primer nombre">
-                    @if(signUpForm.get('nameUser')?.invalid && signUpForm.get('nameUser')?.touched){
-                        <small class="text-red-500 mt-1 block">Ingresa tu primer nombre</small>
+                    <!-- Rol -->
+                    <select class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand appearance-none" 
+                    formControlName="idRole">
+                        <option value="" disabled selected>Selecciona un rol</option>
+                        @for (role of roles; track role.idRole) {
+                            <option [value]="role.idRole">{{role.roleName}}</option>
+                        }
+                    </select>
+                    @if(signUpForm.get('idRole')?.invalid && signUpForm.get('idRole')?.touched){
+                        <small class="text-red-500 mt-1 block">Selecciona un rol</small>
                     }
                 </div>
 
-                <div class="h-20 flex flex-col justify-start">
-                    <!-- Apellido  -->
-                    <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand" 
-                    type="text" formControlName="lastNameUser" placeholder="Ingresa tu apellido">
-                    @if(signUpForm.get('lastNameUser')?.invalid && signUpForm.get('lastNameUser')?.touched){
-                        <small class="text-red-500 mt-1 block">Ingresa tu apellido</small>
-                    }
-                </div>   
-
-                <div class="h-20 flex flex-col justify-start">
-                    <!-- Email -->
-                    <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand" 
-                    type="email" formControlName="email" placeholder="tucorreo@mail.com">
-                    @if(signUpForm.get('email')?.invalid && signUpForm.get('email')?.touched){
-                        <small class="text-red-500 mt-1 block">Ingresa tu correo</small>
-                    }
-                </div>
-                
-                <div class="h-20 flex flex-col justify-start">
-                    <div class="relative">
-                        <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand pr-10" 
-                        type="password" formControlName="password" placeholder="Ingresa tu contraseña">
-                        <span class="material-symbols-outlined absolute top-1/2 right-3 -translate-y-1/2 text-text-muted cursor-pointer hover:text-brand transition-colors">visibility</span>
+                <div class="flex gap-4">
+                    <div class="h-20 flex flex-col justify-start w-1/2">
+                        <!-- Primer nombre -->
+                        <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand" 
+                        type="text" formControlName="firstName" placeholder="Primer nombre">
+                        @if(signUpForm.get('firstName')?.invalid && signUpForm.get('firstName')?.touched){
+                            <small class="text-red-500 mt-1 block">Ingresa el nombre</small>
+                        }
                     </div>
 
-                    @if(signUpForm.get("password")?.invalid && signUpForm.get("password")?.touched){
-                        <small class="text-red-500 mt-1 pl-1 block text-left animate-fade-in ">La contraseña es requerida</small>
-                    }
+                    <div class="h-20 flex flex-col justify-start w-1/2">
+                        <!-- Apellido  -->
+                        <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand" 
+                        type="text" formControlName="lastName" placeholder="Apellido">
+                        @if(signUpForm.get('lastName')?.invalid && signUpForm.get('lastName')?.touched){
+                            <small class="text-red-500 mt-1 block">Ingresa el apellido</small>
+                        }
+                    </div>   
                 </div>
+
+                <div class="flex gap-4">
+                    <div class="h-20 flex flex-col justify-start w-1/2">
+                        <!-- DUI -->
+                        <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand" 
+                        type="text" formControlName="documentId" placeholder="DUI (Opcional)">
+                    </div>
+
+                    <div class="h-20 flex flex-col justify-start w-1/2">
+                        <!-- Teléfono  -->
+                        <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand" 
+                        type="text" formControlName="phone" placeholder="Teléfono (Opcional)">
+                    </div>   
+                </div>
+
+                @if (!userToEdit) {
+                    <div class="h-20 flex flex-col justify-start">
+                        <!-- Email -->
+                        <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand" 
+                        type="email" formControlName="email" placeholder="correo@ejemplo.com">
+                        @if(signUpForm.get('email')?.invalid && signUpForm.get('email')?.touched){
+                            <small class="text-red-500 mt-1 block">Ingresa un correo válido</small>
+                        }
+                    </div>
+                    
+                    <div class="h-20 flex flex-col justify-start">
+                        <div class="relative">
+                            <!-- Password -->
+                            <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand pr-10" 
+                            type="password" formControlName="password" placeholder="Ingresa una contraseña">
+                            <span class="material-symbols-outlined absolute top-1/2 right-3 -translate-y-1/2 text-text-muted cursor-pointer hover:text-brand transition-colors">visibility</span>
+                        </div>
+
+                        @if(signUpForm.get("password")?.invalid && signUpForm.get("password")?.touched){
+                            <small class="text-red-500 mt-1 pl-1 block text-left animate-fade-in ">La contraseña es requerida</small>
+                        }
+                    </div>
+                } @else {
+                    <div class="h-10 flex items-center justify-start mb-4">
+                         <label class="flex items-center cursor-pointer">
+                           <input type="checkbox" formControlName="isActive" class="sr-only peer">
+                           <div class="w-11 h-6 bg-border-main peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-brand rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand relative"></div>
+                           <span class="ml-3 text-sm font-medium text-text-main">Usuario Activo</span>
+                         </label>
+                    </div>
+                }
             </div>  
-                    
-                    
-                    
-                
-                <button class="bg-brand py-2 rounded-xl text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50 mt-2" 
-                        type="submit" [disabled]="signUpForm.invalid">
-                    Registrarse
-                </button>
-            </form>  
-        </div>
+            
+            <button class="bg-brand py-2 rounded-xl text-white font-bold hover:opacity-90 transition-opacity disabled:opacity-50 mt-2" 
+                    type="submit" [disabled]="signUpForm.invalid">
+                {{ userToEdit ? 'Guardar Cambios' : 'Crear Usuario' }}
+            </button>
+        </form>  
     </div>
-</div>
+
+    </div>
+  </div>
 }

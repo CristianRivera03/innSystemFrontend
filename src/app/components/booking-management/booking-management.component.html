@@ -1,0 +1,104 @@
+<div class="p-6 md:p-8">
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+    <div>
+      <h1 class="text-2xl font-bold text-text-main">Gestión de Reservas</h1>
+      <p class="text-muted text-sm mt-1">Administra las estancias, llegadas y salidas de los huéspedes.</p>
+    </div>
+
+    <button (click)="openCreateModal()" class="bg-brand text-white px-5 py-2.5 rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center gap-2 shadow-sm">
+      <span class="material-symbols-outlined text-[20px]">add</span>
+      Nueva Reserva
+    </button>
+  </div>
+
+  <div *ngIf="isLoading" class="flex justify-center items-center p-12">
+    <span class="material-symbols-outlined animate-spin text-4xl text-brand">progress_activity</span>
+  </div>
+
+  <div *ngIf="!isLoading && bookings.length === 0" class="bg-card border border-border-main rounded-xl p-12 flex flex-col items-center justify-center text-center">
+    <div class="w-16 h-16 bg-input rounded-full flex items-center justify-center mb-4 shadow-sm border border-border-main">
+      <span class="material-symbols-outlined text-3xl text-muted">calendar_today</span>
+    </div>
+    <h3 class="text-lg font-semibold text-text-main">No hay reservas registradas</h3>
+    <p class="text-muted mt-2 max-w-sm">Comienza creando la primera reserva para un huésped.</p>
+  </div>
+
+  <div *ngIf="!isLoading && bookings.length > 0" class="bg-card border border-border-main rounded-xl overflow-hidden shadow-sm">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-input text-muted text-xs uppercase tracking-wider border-b border-border-main">
+            <th class="p-4 font-semibold">Huésped</th>
+            <th class="p-4 font-semibold">Habitación</th>
+            <th class="p-4 font-semibold">Fechas (In - Out)</th>
+            <th class="p-4 font-semibold">Total</th>
+            <th class="p-4 font-semibold">Estado</th>
+            <th class="p-4 font-semibold text-right">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="text-text-main divide-y divide-border-main">
+          
+          <tr *ngFor="let booking of bookings" class="hover:bg-input transition-colors duration-200">
+            
+            <td class="p-4">
+              <div class="font-bold text-brand">{{ booking.firstName }} {{ booking.lastName }}</div>
+              <div class="text-xs text-muted">{{ booking.email }}</div>
+            </td>
+            
+            <td class="p-4">
+              <div class="font-medium">Hab. #{{ booking.idRoom }}</div>
+              <div class="text-xs text-muted flex items-center gap-1 mt-0.5">
+                <span class="material-symbols-outlined text-[14px]">person</span>
+                {{ booking.guestsCount }} personas
+              </div>
+            </td>
+            
+            <td class="p-4 font-medium text-sm">
+              <div class="text-green-600 dark:text-green-400 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[16px]">login</span>
+                {{ booking.checkIn | date:'mediumDate' }}
+              </div>
+              <div class="text-red-600 dark:text-red-400 flex items-center gap-1 mt-1">
+                <span class="material-symbols-outlined text-[16px]">logout</span>
+                {{ booking.checkOut | date:'mediumDate' }}
+              </div>
+            </td>
+            
+            <td class="p-4 font-bold text-text-main">
+              ${{ booking.totalCost | number:'1.2-2' }}
+            </td>
+            
+            <td class="p-4">
+              <span class="px-2.5 py-1 rounded-full text-xs font-bold"
+                    [ngClass]="{
+                      'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-400': booking.status === 'Pending',
+                      'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400': booking.status === 'Confirmed' || booking.status === 'Completed',
+                      'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400': booking.status === 'Cancelled' || booking.status === 'No_Show'
+                    }">
+                {{ 
+                  booking.status === 'Pending' ? 'Pendiente' : 
+                  booking.status === 'Confirmed' ? 'Confirmada' : 
+                  booking.status === 'Completed' ? 'Completada' : 
+                  booking.status === 'No_Show' ? 'No Show' : 'Cancelada' 
+                }}
+              </span>
+            </td>
+
+            <td class="p-4 text-right">
+              <div class="flex items-center justify-end gap-2">
+                <button *ngIf="booking.status === 'Pending'" (click)="updateStatus(booking.idBooking, 2)" class="p-1.5 text-green-600 hover:bg-green-50 rounded-md transition-all" title="Confirmar Reserva">
+                  <span class="material-symbols-outlined text-[20px]">check_circle</span>
+                </button>
+                
+                <button *ngIf="booking.status === 'Pending' || booking.status === 'Confirmed'" (click)="updateStatus(booking.idBooking, 4)" class="p-1.5 text-red-600 hover:bg-red-50 rounded-md transition-all" title="Cancelar Reserva">
+                  <span class="material-symbols-outlined text-[20px]">cancel</span>
+                </button>
+              </div>
+            </td>
+            
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

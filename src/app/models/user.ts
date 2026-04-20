@@ -1,5 +1,5 @@
 export interface UserDTO {
-    idUser: string;
+    idUser: string;      
     idRole: number;
     roleName?: string;
     firstName: string;
@@ -8,11 +8,12 @@ export interface UserDTO {
     phone?: string;
     documentId?: string;
     isActive: boolean;
-    createdAt?: Date;
-    updatedAt?: Date;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 export interface UserCreateDTO {
+    idRole: number;
     firstName: string;
     lastName: string;
     email: string;
@@ -21,7 +22,16 @@ export interface UserCreateDTO {
     documentId?: string;
 }
 
-export interface ChangeUserRoleDTO{
-    idUser : string;
-    idRole : number;
+export interface ChangeUserRoleDTO {
+    idUser: string;
+    idRole: number;
+}
+
+export interface UserUpdateDTO {
+    idRole: number;
+    firstName: string;
+    lastName: string;
+    phone?: string;
+    documentId?: string;
+    isActive: boolean;
 }

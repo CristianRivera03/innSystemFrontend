@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment.development';
 import { ResponseAPI } from '../models/response-api';
 import { ModuleDTO } from '../models/module';
-import { UpdatePermissionsDTO } from '../models/update-permissions';
+import { AssignModulesDTO } from '../models/update-permissions';
 import { CreateRoleDTO, RoleDTO } from '../models/role';
 
 
@@ -37,7 +37,7 @@ export class RoleService {
 
 
   updateRolePermission(roleId :number , moduleIds : number[]) : Observable<ResponseAPI<boolean>>{
-    const payload : UpdatePermissionsDTO= {
+    const payload : AssignModulesDTO= {
       idRole : roleId,
       moduleIds : moduleIds
     };

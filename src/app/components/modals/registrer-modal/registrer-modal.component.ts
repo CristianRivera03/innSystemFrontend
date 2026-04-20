@@ -1,81 +1,120 @@
-import { Component, Input, Output, EventEmitter, OnInit, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { UserService } from '../../../services/user.service';
-
+import { RoleDTO } from '../../../models/role';
+import { UserDTO, UserUpdateDTO } from '../../../models/user';
 
 @Component({
   selector: 'app-registrer-modal',
   imports: [ReactiveFormsModule],
   templateUrl: './registrer-modal.component.html',
 })
-export class RegistrerModalComponent implements OnInit {
-
+export class RegistrerModalComponent implements OnInit, OnChanges {
   private fb = inject(FormBuilder);
   private userService = inject(UserService);
   isDarkMode: boolean = false;
 
-  // recibe estado del componente padre
   @Input() isOpen: boolean = false;
+  @Input() roles: RoleDTO[] = [];
+  @Input() userToEdit: UserDTO | null = null; 
 
-  // emite evento hacia el padre 
   @Output() onClose = new EventEmitter<void>();
+  @Output() onUserCreated = new EventEmitter<void>(); 
 
-  closeModal() {
-    this.onClose.emit(); // dispara el evento
-  }
-
+  signUpForm!: FormGroup;
 
   ngOnInit(): void {
-
     const savedTheme = localStorage.getItem("theme");
-    //verifica si la compu esta en obscuro
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-
     if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
       this.isDarkMode = true;
-      document.documentElement.classList.add("dark")
+      document.documentElement.classList.add("dark");
     } else {
       this.isDarkMode = false;
-      document.documentElement.classList.remove("dark")
+      document.documentElement.classList.remove("dark");
+    }
+    if(!this.signUpForm) this.initForm();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['userToEdit'] || changes['isOpen']) {
+      if(this.isOpen) {
+         this.initForm();
+      }
     }
   }
 
-  signUpForm: FormGroup = this.fb.group({
-    userName: ['', [Validators.required]],
-    nameUser: ['', [Validators.required]],
-    lastNameUser: ['', [Validators.required]],
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required]]
-  });
+  initForm() {
+    this.signUpForm = this.fb.group({
+      idRole: [this.userToEdit?.idRole || '', [Validators.required]],
+      firstName: [this.userToEdit?.firstName || '', [Validators.required]],
+      lastName: [this.userToEdit?.lastName || '', [Validators.required]],
+      phone: [this.userToEdit?.phone || ''],
+      documentId: [this.userToEdit?.documentId || ''],
+      isActive: [this.userToEdit ? this.userToEdit.isActive : true]
+    });
 
+    if (!this.userToEdit) {
+      this.signUpForm.addControl('email', this.fb.control('', [Validators.required, Validators.email]));
+      this.signUpForm.addControl('password', this.fb.control('', [Validators.required]));
+    }
+  }
+
+  closeModal() {
+    this.onClose.emit();
+    if(this.signUpForm) {
+      this.signUpForm.reset();
+    }
+  }
 
   onSubmit() {
     if (this.signUpForm.valid) {
-      //se recepta el formulario
-      const dataForm = this.signUpForm.value
-    
-    this.userService.signUp(this.signUpForm.value).subscribe({
-        next: (response) => {
-          if (response.status === true) {
-            alert("¡Cuenta creada! exitosamente");
-            this.closeModal()
+      const dataForm = { ...this.signUpForm.value, idRole: Number(this.signUpForm.value.idRole) };
 
-          }else{
-            alert("Error al registrar");
-            console.error("error" ,response.status);
-            this.closeModal()
-          }
+      if (this.userToEdit) {
+        const updateData: UserUpdateDTO = {
+            idRole: dataForm.idRole,
+            firstName: dataForm.firstName,
+            lastName: dataForm.lastName,
+            phone: dataForm.phone,
+            documentId: dataForm.documentId,
+            isActive: dataForm.isActive
+        };
 
-        },
-        error: (err) => {
-          console.error("error de al crear el usuario", err);
-          alert("No se pudo crear el usuario");
-        }
-      })
-    }else{
+        this.userService.updateUser(this.userToEdit.idUser, updateData).subscribe({
+            next: (response) => {
+              if (response.status === true) {
+                alert("¡Usuario actualizado exitosamente!");
+                this.onUserCreated.emit();
+                this.closeModal();
+              } else {
+                alert("Error al actualizar: " + (response.msg || "Desconocido"));
+              }
+            },
+            error: (err) => {
+              console.error("error al actualizar el usuario", err);
+              alert("No se pudo actualizar el usuario");
+            }
+        });
+      } else {
+        this.userService.signUp(dataForm).subscribe({
+            next: (response) => {
+              if (response.status === true) {
+                alert("¡Cuenta creada exitosamente!");
+                this.onUserCreated.emit();
+                this.closeModal();
+              } else {
+                alert("Error al registrar: " + (response.msg || "Desconocido"));
+              }
+            },
+            error: (err) => {
+              console.error("error al crear el usuario", err);
+              alert("No se pudo crear el usuario");
+            }
+        });
+      }
+    } else {
       this.signUpForm.markAllAsTouched();
     }
   }
-
-
 }

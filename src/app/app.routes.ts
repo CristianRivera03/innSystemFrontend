@@ -2,13 +2,13 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './components/login/login.component';
 import { LayoutComponent } from './components/layout/layout.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { ManagerUserComponent } from './components/manager-user/manager-user.component';
+import { UserManagementComponent } from './components/user-management/user-management.component';
 import { roleGuard } from './guards/role.guard';
 import { SignUpComponent } from './components/sign-up/sign-up.component';
-import { RoleManagerComponent } from './components/role-manager/role-manager.component';
+import { RoleManagementComponent } from './components/role-management/role-management.component';
 import { DatalogComponent } from './components/datalog/datalog.component';
 import { RoomManagementComponent } from './components/room-management/room-management.component';
-
+import { BookingManagementComponent } from './components/booking-management/booking-management.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -32,21 +32,26 @@ export const routes: Routes = [
                 component: RoomManagementComponent,
                 canActivate : [roleGuard]
             },
-            
-            
+
             //Gestor de usuarios
-            { path: 'manager-users', 
-                component: ManagerUserComponent, 
+            { path: 'user-management', 
+                component: UserManagementComponent, 
                 canActivate: [roleGuard]
             },
 
-            { path: 'role-manager', 
-                component: RoleManagerComponent, 
+            { path: 'role-management', 
+                component: RoleManagementComponent, 
                 canActivate: [roleGuard]
             },
 
             { path: 'datalog', 
                 component: DatalogComponent, 
+                canActivate: [roleGuard]
+            },
+
+            {
+                path: "booking-management",
+                component: BookingManagementComponent,
                 canActivate: [roleGuard]
             }
 

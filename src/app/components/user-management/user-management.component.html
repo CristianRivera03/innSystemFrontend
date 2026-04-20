@@ -1,0 +1,83 @@
+<div class="users-container p-6 bg-background min-h-screen">
+    <header class="navbar card flex justify-between items-center mb-8 bg-card p-4 rounded-2xl shadow-sm border border-border-main">
+        <div class="logo">
+            <h1 class="text-2xl font-bold text-brand">Hotel Continental</h1>
+        </div>
+
+        <div class="user-profile text-text-main">
+            <span>Bienvenido, <strong>{{currentUser?.firstName}} {{currentUser?.lastName}}</strong></span>
+        </div>
+    </header>
+
+    <main>
+        <!-- listado de usuarios -->
+        <section class="feed-section">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-3xl font-bold text-text-main tracking-tight">Usuarios Registrados</h2>
+                <button (click)="openRegisterModal()" class="bg-brand text-white font-bold px-5 py-2 rounded-xl hover:opacity-90 transition-opacity shadow-md flex items-center gap-2">
+                    <span class="material-symbols-outlined">person_add</span>
+                    Registrar Usuario
+                </button>
+                
+                <!-- Modal de registro -->
+                <app-registrer-modal 
+                    [isOpen]="isRegisterModalOpen"
+                    [roles]="roles"
+                    [userToEdit]="userToEdit"
+                    (onUserCreated)="loadUsers()"
+                    (onClose)="closeRegisterModal()">
+                </app-registrer-modal>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                @for (user of users; track user.idUser) {
+                    <!-- Cards de usuarios -->
+                    <article class="bg-card p-6 rounded-2xl shadow-sm border border-border-main hover:shadow-md transition-shadow flex flex-col justify-between group">
+                        
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-full bg-brand/10 text-brand flex items-center justify-center font-bold text-xl uppercase shrink-0">
+                                {{user.firstName.charAt(0)}}{{user.lastName.charAt(0)}}
+                            </div>
+                            <div class="flex-1 overflow-hidden">
+                                <h3 class="font-bold text-lg text-text-main truncate">{{user.firstName}} {{user.lastName}}</h3>
+                                <div class="flex flex-col text-sm text-text-muted mt-1 gap-0.5">
+                                    <span class="truncate">{{user.email}}</span>
+                                    <div class="flex items-center gap-1">
+                                        <span class="material-symbols-outlined text-[16px]">badge</span>
+                                        <span class="truncate font-semibold">{{user.documentId || 'Sin DUI'}}</span>
+                                    </div>
+                                    @if(user.phone) {
+                                      <div class="flex items-center gap-1">
+                                          <span class="material-symbols-outlined text-[16px]">call</span>
+                                          <span class="truncate">{{user.phone}}</span>
+                                      </div>
+                                    }
+                                </div>
+                                <span class="inline-block mt-2 px-2 py-0.5 text-xs font-semibold rounded-full bg-brand/20 text-brand">
+                                    {{user.roleName}}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 mt-auto border-t border-border-main flex flex-col gap-3">
+                                <button class="w-full mt-2 bg-brand/10 text-brand hover:bg-brand hover:text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2" (click)="openEditModal(user)">
+                                    <span class="material-symbols-outlined text-[18px]">edit</span>
+                                    Editar usuario
+                                </button>
+
+                                <button class="w-full mt-2 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2" (click)="inactiveUser(user.idUser)">
+                                    <span class="material-symbols-outlined text-[18px]">delete</span>
+                                    Eliminar usuario
+                                </button>
+                        </div>
+                    </article>
+                }@empty {
+                    <div class="col-span-full py-12 flex flex-col items-center justify-center bg-card rounded-2xl border border-border-main border-dashed">
+                        <span class="material-symbols-outlined text-4xl text-text-muted mb-3 opacity-50">group_off</span>
+                        <p class="text-text-muted font-medium">Aún no hay usuarios registrados</p>
+                    </div>
+                }
+            </div>
+        </section>
+    </main>
+</div>
