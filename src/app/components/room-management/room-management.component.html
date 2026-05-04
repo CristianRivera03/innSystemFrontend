@@ -6,11 +6,19 @@
     </div>
 
 
-    
-    <button (click)="openCreateModal()" class="bg-brand text-white px-5 py-2.5 rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center gap-2 shadow-sm">
-      <span class="material-symbols-outlined text-[20px]">add</span>
-      Nueva Habitación
-    </button>
+
+    <div class="flex flex-row gap-2">
+      <button  class="bg-brand text-white px-5 py-2.5 rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center gap-2 shadow-sm">
+        <span class="material-symbols-outlined text-[20px]">add</span>
+        Nuevo Tipo de Habitación
+      </button>
+      
+      <button (click)="openCreateModal()" class="bg-brand text-white px-5 py-2.5 rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center gap-2 shadow-sm">
+        <span class="material-symbols-outlined text-[20px]">add</span>
+        Nueva Habitación
+      </button>
+
+    </div>
   </div>
 
   <div *ngIf="rooms.length === 0" class="bg-card border border-border-main rounded-xl p-12 flex flex-col items-center justify-center text-center">
