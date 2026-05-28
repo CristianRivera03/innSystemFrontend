@@ -9,6 +9,7 @@ import { RoleManagementComponent } from './components/role-management/role-manag
 import { DatalogComponent } from './components/datalog/datalog.component';
 import { RoomManagementComponent } from './components/room-management/room-management.component';
 import { BookingManagementComponent } from './components/booking-management/booking-management.component';
+import { GeneralManagementComponent } from './components/catalogs/general-management/general-management.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -52,6 +53,12 @@ export const routes: Routes = [
             {
                 path: "booking-management",
                 component: BookingManagementComponent,
+                canActivate: [roleGuard]
+            },
+
+            {
+                path: 'general-management',
+                component: GeneralManagementComponent,
                 canActivate: [roleGuard]
             }
 

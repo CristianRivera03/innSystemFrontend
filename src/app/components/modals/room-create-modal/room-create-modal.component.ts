@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { CatalogService } from '../../../services/catalog.service';
 import { RoomService } from '../../../services/room.service';
 import { CatalogDTO } from '../../../models/catalog';
-import { CreateRoomDTO, RoomDTO, RoomUpdateDTO } from '../../../models/room';
+import { CreateRoomDTO, RoomDTO, RoomUpdateDTO, RoomImageDTO, ServiceDTO } from '../../../models/room';
 import { ResponseAPI } from '../../../models/response-api';
 import { CommonModule } from '@angular/common';
 
@@ -35,11 +35,17 @@ export class RoomCreateModalComponent implements OnInit {
   isLoading = true;
   isSaving = false;
 
+  selectedServiceIds: Set<number> = new Set();
+  selectedFiles: File[] = [];
+  existingImages: RoomImageDTO[] = [];
+  deletedPhotographIds: number[] = [];
+
   constructor() {
     this.roomForm = this.fb.group({
       roomNumber: ['', [Validators.required]],
       description: [''],
       idRoomType: ['', [Validators.required]],
+      basePrice: ['', [Validators.required, Validators.min(0)]],
       idStatus: [1, [Validators.required]],
     })
   }
@@ -88,10 +94,22 @@ export class RoomCreateModalComponent implements OnInit {
 
           roomNumber: this.roomToEdit.roomNumber,
           idRoomType: this.roomToEdit.idRoomType,
+          basePrice: this.roomToEdit.basePrice,
           description: this.roomToEdit.description,
           idStatus: this.roomToEdit.idStatus,
 
         });
+
+        // Cargar servicios existentes
+        this.selectedServiceIds.clear();
+        if (this.roomToEdit.services) {
+           this.roomToEdit.services.forEach(s => this.selectedServiceIds.add(s.idService));
+        }
+
+        // Cargar imágenes existentes
+        this.existingImages = this.roomToEdit.images ? [...this.roomToEdit.images] : [];
+        this.deletedPhotographIds = [];
+        this.selectedFiles = [];
 
         //Desahabilitar campos que no se pueden editar
         this.roomForm.get('roomNumber')?.disable();
@@ -101,6 +119,10 @@ export class RoomCreateModalComponent implements OnInit {
       } else {
         //Si no hay habitacion seleccionada, se asume que es creación
         this.roomForm.reset({ idStatus: 1 });
+        this.selectedServiceIds.clear();
+        this.selectedFiles = [];
+        this.existingImages = [];
+        this.deletedPhotographIds = [];
         this.roomForm.get('roomNumber')?.enable();
         this.roomForm.get('idRoomType')?.enable();
       }
@@ -121,8 +143,12 @@ export class RoomCreateModalComponent implements OnInit {
       const updatePayload: RoomUpdateDTO = {
         idRoom: this.roomToEdit.idRoom,
         idRoomType: Number(this.roomForm.getRawValue().idRoomType),
+        basePrice: Number(this.roomForm.getRawValue().basePrice),
         idStatus: Number(this.roomForm.getRawValue().idStatus),
         description: this.roomForm.getRawValue().description,
+        serviceIds: Array.from(this.selectedServiceIds),
+        photographs: this.selectedFiles,
+        deletedPhotographIds: this.deletedPhotographIds
       };
 
       this.roomService.updateRoom(updatePayload).subscribe({
@@ -131,6 +157,10 @@ export class RoomCreateModalComponent implements OnInit {
             this.onSuccess.emit(); // notificar al padre
             this.closeModal();
             this.roomForm.reset({ idStatus: 1 });
+            this.selectedServiceIds.clear();
+            this.selectedFiles = [];
+            this.existingImages = [];
+            this.deletedPhotographIds = [];
             this.roomForm.get('roomNumber')?.enable();
             this.roomForm.get('idRoomType')?.enable();
           } else {
@@ -149,8 +179,11 @@ export class RoomCreateModalComponent implements OnInit {
       const newRoom: CreateRoomDTO = {
         roomNumber: this.roomForm.value.roomNumber,
         idRoomType: Number(this.roomForm.value.idRoomType),
+        basePrice: Number(this.roomForm.value.basePrice),
         idStatus: Number(this.roomForm.value.idStatus),
         description: this.roomForm.value.description,
+        serviceIds: Array.from(this.selectedServiceIds),
+        photographs: this.selectedFiles
       };
 
       // se envia el formulario
@@ -160,6 +193,8 @@ export class RoomCreateModalComponent implements OnInit {
             this.onSuccess.emit(); //notificar al padre que se creo la sala
             this.closeModal();
             this.roomForm.reset({ idStatus: 1 }); // Limpiar campos del formulario
+            this.selectedServiceIds.clear();
+            this.selectedFiles = [];
           } else {
             alert("Error al crear la habitación");
           }
@@ -178,8 +213,32 @@ export class RoomCreateModalComponent implements OnInit {
 
 
 
+  toggleService(id: number) {
+    if (this.selectedServiceIds.has(id)) {
+      this.selectedServiceIds.delete(id);
+    } else {
+      this.selectedServiceIds.add(id);
+    }
+  }
 
+  onFileSelected(event: any) {
+    const files = event.target.files;
+    if (files) {
+      for (let i = 0; i < files.length; i++) {
+        this.selectedFiles.push(files[i]);
+      }
+    }
+    // reset input value so the same file can be selected again if removed
+    event.target.value = '';
+  }
 
+  removeFile(index: number) {
+    this.selectedFiles.splice(index, 1);
+  }
 
+  removeExistingImage(idImage: number, index: number) {
+    this.deletedPhotographIds.push(idImage);
+    this.existingImages.splice(index, 1);
+  }
 
 }

@@ -16,24 +16,26 @@
           </h2>
           
           <form class="flex flex-col gap-1" [formGroup]="roomForm" (ngSubmit)="onSubmit()">
-              <div class="flex flex-col">
+              <div class="flex flex-col max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
   
-                  <div class="h-20 flex flex-col justify-start">
+                  <div class="h-24 flex flex-col justify-start">
+                      <label class="text-sm font-medium text-text-main mb-1">Número de Habitación</label>
                       <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand disabled:opacity-50" 
-                      type="text" formControlName="roomNumber" placeholder="Número de Habitación (Ej. 101)">
+                      type="text" formControlName="roomNumber" placeholder="Ej. 101">
                       
                       @if(roomForm.get('roomNumber')?.invalid && roomForm.get('roomNumber')?.touched){
                           <small class="text-red-500 mt-1 block animate-fade-in">Ingresa el número de habitación</small>
                       }
                   </div>
   
-                  <div class="h-20 flex flex-col justify-start">
+                  <div class="h-24 flex flex-col justify-start">
+                      <label class="text-sm font-medium text-text-main mb-1">Tipo de Habitación</label>
                       <select class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full focus:outline-none focus:ring-2 focus:ring-brand appearance-none disabled:opacity-50" 
                       formControlName="idRoomType">
                           <option value="" disabled selected>Selecciona un tipo de cuarto</option>
                           
                           @for (type of catalogs?.roomTypes; track type.idRoomType) {
-                            <option [value]="type.idRoomType">{{ type.name }} (${{ type.basePrice }})</option>
+                            <option [value]="type.idRoomType">{{ type.name }}</option>
                           }
                       </select>
                       
@@ -41,8 +43,19 @@
                           <small class="text-red-500 mt-1 block animate-fade-in">Selecciona un tipo válido</small>
                       }
                   </div>
+
+                  <div class="h-24 flex flex-col justify-start">
+                      <label class="text-sm font-medium text-text-main mb-1">Precio Base</label>
+                      <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand disabled:opacity-50" 
+                      type="number" formControlName="basePrice" placeholder="Ej. 100.00">
+                      
+                      @if(roomForm.get('basePrice')?.invalid && roomForm.get('basePrice')?.touched){
+                          <small class="text-red-500 mt-1 block animate-fade-in">Ingresa un precio base válido</small>
+                      }
+                  </div>
   
-                  <div class="h-20 flex flex-col justify-start">
+                  <div class="h-24 flex flex-col justify-start">
+                      <label class="text-sm font-medium text-text-main mb-1">Estado de Habitación</label>
                       <select class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full focus:outline-none focus:ring-2 focus:ring-brand appearance-none" 
                       formControlName="idStatus">
                           @for (status of catalogs?.roomStatuses; track status.id) {
@@ -51,9 +64,66 @@
                       </select>
                   </div> 
   
-                  <div class="h-28 flex flex-col justify-start">
+                  <div class="h-32 flex flex-col justify-start">
+                      <label class="text-sm font-medium text-text-main mb-1">Descripción (Opcional)</label>
                       <textarea class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand resize-none" 
-                      formControlName="description" rows="3" placeholder="Descripción de la habitación (Opcional)..."></textarea>
+                      formControlName="description" rows="3" placeholder="Descripción de la habitación..."></textarea>
+                  </div>
+
+                  <!-- Servicios Disponibles -->
+                  <div class="flex flex-col mb-4">
+                      <label class="text-sm font-medium text-text-main mb-2">Servicios Disponibles</label>
+                      <div class="flex flex-wrap gap-2 p-2 border border-border-main rounded-xl bg-input">
+                          @for (service of catalogs?.services; track service.idService) {
+                              <button type="button" 
+                                      (click)="toggleService(service.idService)"
+                                      [ngClass]="selectedServiceIds.has(service.idService) ? 'bg-brand text-white border-brand' : 'bg-transparent text-text-main border-border-main hover:bg-black/5 dark:hover:bg-white/5'"
+                                      class="px-3 py-1 rounded-full border text-sm font-medium transition-colors">
+                                  {{ service.name }}
+                              </button>
+                          }
+                      </div>
+                  </div>
+
+                  <!-- Fotografías -->
+                  <div class="flex flex-col mb-4">
+                      <label class="text-sm font-medium text-text-main mb-2">Fotografías</label>
+                      
+                      <!-- Botón para subir archivos -->
+                      <label class="cursor-pointer flex items-center justify-center gap-2 p-3 rounded-xl border border-dashed border-border-main bg-input hover:bg-black/5 dark:hover:bg-white/5 transition-colors text-text-muted w-full mb-2">
+                          <span class="material-symbols-outlined">upload_file</span>
+                          <span class="text-sm font-medium">Seleccionar imágenes</span>
+                          <input type="file" multiple accept="image/*" class="hidden" (change)="onFileSelected($event)">
+                      </label>
+
+                      <!-- Lista de Imágenes Existentes (en caso de edición) -->
+                      @if (existingImages.length > 0) {
+                          <div class="grid grid-cols-3 gap-2 mb-2">
+                              @for (img of existingImages; track img.idImage; let idx = $index) {
+                                  <div class="relative group rounded-xl overflow-hidden border border-border-main aspect-square">
+                                      <img [src]="img.url" class="w-full h-full object-cover">
+                                      <button type="button" (click)="removeExistingImage(img.idImage, idx)" 
+                                              class="absolute inset-0 bg-black/50 text-white opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                                          <span class="material-symbols-outlined">delete</span>
+                                      </button>
+                                  </div>
+                              }
+                          </div>
+                      }
+
+                      <!-- Lista de Archivos Seleccionados Nuevos -->
+                      @if (selectedFiles.length > 0) {
+                          <div class="flex flex-col gap-2">
+                              @for (file of selectedFiles; track file.name; let idx = $index) {
+                                  <div class="flex items-center justify-between p-2 border border-border-main rounded-lg bg-input/50">
+                                      <span class="text-xs text-text-main truncate max-w-[80%]">{{ file.name }}</span>
+                                      <button type="button" (click)="removeFile(idx)" class="text-red-500 hover:text-red-700 transition-colors">
+                                          <span class="material-symbols-outlined text-sm">close</span>
+                                      </button>
+                                  </div>
+                              }
+                          </div>
+                      }
                   </div>
                   
               </div>  

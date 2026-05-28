@@ -21,6 +21,11 @@ export class RoomManagementComponent implements OnInit {
   isCreateModalOpen: boolean = false;
   // Variables para edición de habitación
   selectedRoom: RoomDTO | null = null;
+  viewMode: 'list' | 'grid' = 'grid';
+
+  toggleViewMode(mode: 'list' | 'grid') {
+    this.viewMode = mode;
+  }
 
   // Abrir modal de creación de habitación
   openCreateModal() {

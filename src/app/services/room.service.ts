@@ -26,12 +26,42 @@ export class RoomService {
 
   //crear habitacion
   createRoom(payload : CreateRoomDTO) : Observable<ResponseAPI<RoomDTO>>{
-    return this.http.post<ResponseAPI<RoomDTO>>(`${this.apiURL}`, payload)
+    const formData = new FormData();
+    formData.append('roomNumber', payload.roomNumber);
+    formData.append('idRoomType', payload.idRoomType.toString());
+    formData.append('idStatus', payload.idStatus.toString());
+    formData.append('basePrice', payload.basePrice.toString());
+    if (payload.description) formData.append('description', payload.description);
+    
+    if (payload.serviceIds) {
+      payload.serviceIds.forEach(id => formData.append('serviceIds', id.toString()));
+    }
+    if (payload.photographs) {
+      payload.photographs.forEach(file => formData.append('photographs', file));
+    }
+
+    return this.http.post<ResponseAPI<RoomDTO>>(`${this.apiURL}`, formData);
   }
 
   //actualizar habitacion
   updateRoom(payload : RoomUpdateDTO) : Observable<ResponseAPI<RoomDTO>>{
-    return this.http.put<ResponseAPI<RoomDTO>>(`${this.apiURL}/${payload.idRoom}`, payload)
+    const formData = new FormData();
+    formData.append('idRoomType', payload.idRoomType.toString());
+    formData.append('idStatus', payload.idStatus.toString());
+    formData.append('basePrice', payload.basePrice.toString());
+    if (payload.description) formData.append('description', payload.description);
+    
+    if (payload.serviceIds) {
+      payload.serviceIds.forEach(id => formData.append('serviceIds', id.toString()));
+    }
+    if (payload.photographs) {
+      payload.photographs.forEach(file => formData.append('photographs', file));
+    }
+    if (payload.deletedPhotographIds) {
+      payload.deletedPhotographIds.forEach(id => formData.append('deletedPhotographIds', id.toString()));
+    }
+
+    return this.http.put<ResponseAPI<RoomDTO>>(`${this.apiURL}/${payload.idRoom}`, formData);
   }
 
   //Soft delete habitacion (cambiar estatus a inactiva)

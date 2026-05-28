@@ -2,15 +2,25 @@
   <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
     <div>
       <h1 class="text-2xl font-bold text-text-main">Gestión de Habitaciones</h1>
-      <p class="text-muted text-sm mt-1">Administra el inventario, precios y estado operativo.</p>
+      <p class="text-text-muted text-sm mt-1">Administra el inventario, precios y estado operativo.</p>
     </div>
 
 
 
     <div class="flex flex-row gap-2">
+      <!-- Toggle de vistas -->
+      <div class="flex bg-input border border-border-main rounded-lg p-1 mr-2">
+        <button (click)="toggleViewMode('grid')" [ngClass]="viewMode === 'grid' ? 'bg-card shadow-sm text-brand' : 'text-text-muted hover:text-text-main'" class="px-3 py-1.5 rounded-md flex items-center justify-center transition-all" title="Vista en Cuadrícula">
+          <span class="material-symbols-outlined text-[20px]">grid_view</span>
+        </button>
+        <button (click)="toggleViewMode('list')" [ngClass]="viewMode === 'list' ? 'bg-card shadow-sm text-brand' : 'text-text-muted hover:text-text-main'" class="px-3 py-1.5 rounded-md flex items-center justify-center transition-all" title="Vista en Lista">
+          <span class="material-symbols-outlined text-[20px]">view_list</span>
+        </button>
+      </div>
+
       <button  class="bg-brand text-white px-5 py-2.5 rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center gap-2 shadow-sm">
         <span class="material-symbols-outlined text-[20px]">add</span>
-        Nuevo Tipo de Habitación
+        Nuevo Tipo
       </button>
       
       <button (click)="openCreateModal()" class="bg-brand text-white px-5 py-2.5 rounded-lg font-medium hover:opacity-90 transition-opacity flex items-center gap-2 shadow-sm">
@@ -23,17 +33,86 @@
 
   <div *ngIf="rooms.length === 0" class="bg-card border border-border-main rounded-xl p-12 flex flex-col items-center justify-center text-center">
     <div class="w-16 h-16 bg-input rounded-full flex items-center justify-center mb-4 shadow-sm border border-border-main">
-      <span class="material-symbols-outlined text-3xl text-muted">bed</span>
+      <span class="material-symbols-outlined text-3xl text-text-muted">bed</span>
     </div>
     <h3 class="text-lg font-semibold text-text-main">No hay habitaciones registradas</h3>
-    <p class="text-muted mt-2 max-w-sm">Comienza agregando tu primera habitación para poder empezar a recibir reservas.</p>
+    <p class="text-text-muted mt-2 max-w-sm">Comienza agregando tu primera habitación para poder empezar a recibir reservas.</p>
   </div>
 
-  <div *ngIf="rooms.length > 0" class="bg-card border border-border-main rounded-xl overflow-hidden shadow-sm">
+  <!-- Vista de Cuadrícula -->
+  <div *ngIf="rooms.length > 0 && viewMode === 'grid'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 animate-fade-in">
+    <div *ngFor="let room of rooms" class="bg-card border border-border-main rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col group">
+      
+      <!-- Imagen -->
+      <div class="relative h-48 bg-input">
+        <img *ngIf="room.images && room.images.length > 0" [src]="room.images[0].url" alt="Habitación" class="w-full h-full object-cover">
+        <div *ngIf="!room.images || room.images.length === 0" class="w-full h-full flex items-center justify-center text-text-muted">
+          <span class="material-symbols-outlined text-4xl">bed</span>
+        </div>
+        <div class="absolute top-3 right-3">
+          <span class="px-2.5 py-1 rounded-full text-xs font-bold shadow-sm backdrop-blur-md"
+                [ngClass]="{
+                  'bg-green-100/90 text-green-700 dark:bg-green-900/80 dark:text-green-400': room.operationalStatus === 'Active',
+                  'bg-yellow-100/90 text-yellow-700 dark:bg-yellow-900/80 dark:text-yellow-400': room.operationalStatus === 'Maintenance',
+                  'bg-red-100/90 text-red-700 dark:bg-red-900/80 dark:text-red-400': room.operationalStatus === 'Inactive'
+                }">
+            {{ room.operationalStatus === 'Active' ? 'Activa' : 
+               room.operationalStatus === 'Maintenance' ? 'Mantenimiento' : 'Inactiva' }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Contenido -->
+      <div class="p-5 flex-1 flex flex-col">
+        <div class="flex justify-between items-start mb-2">
+          <div>
+            <h3 class="text-xl font-bold text-brand">Hab. {{ room.roomNumber }}</h3>
+            <span class="text-xs font-medium text-text-muted uppercase tracking-wider">{{ room.roomType }}</span>
+          </div>
+          <div class="text-right">
+            <div class="text-lg font-bold text-text-main">${{ room.basePrice | number:'1.2-2' }}</div>
+            <div class="text-xs text-text-muted">por noche</div>
+          </div>
+        </div>
+        
+        <p class="text-sm text-text-muted line-clamp-2 mt-2 flex-1">{{ room.description || 'Sin descripción' }}</p>
+
+        <!-- Servicios extra simplificados -->
+        <div *ngIf="room.services && room.services.length > 0" class="mt-3 flex gap-1 flex-wrap">
+          <span *ngFor="let s of room.services | slice:0:3" class="px-2 py-0.5 text-[10px] uppercase font-semibold border border-border-main rounded text-text-muted">
+            {{ s.name }}
+          </span>
+          <span *ngIf="room.services.length > 3" class="px-2 py-0.5 text-[10px] font-semibold border border-border-main rounded text-text-muted bg-input">
+            +{{ room.services.length - 3 }}
+          </span>
+        </div>
+
+        <!-- Footer Card -->
+        <div class="mt-4 pt-4 border-t border-border-main flex items-center justify-between">
+          <div class="flex items-center gap-1.5 text-text-main text-sm">
+            <span class="material-symbols-outlined text-[18px] text-text-muted">group</span>
+            <span class="font-medium">{{ room.guestCapacity }} {{ room.guestCapacity === 1 ? 'persona' : 'personas' }}</span>
+          </div>
+          
+          <div class="flex gap-1 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity">
+            <button (click)="openUpdateModal(room)" class="p-1.5 text-text-muted hover:text-brand bg-transparent hover:bg-input rounded-md transition-all" title="Editar habitación">
+              <span class="material-symbols-outlined text-[20px]">edit_square</span>
+            </button>
+            <button (click)="inactivateRoom(room)" class="p-1.5 text-text-muted hover:text-red-500 bg-transparent hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-all" title="Dar de baja">
+              <span class="material-symbols-outlined text-[20px]">delete</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vista de Lista -->
+  <div *ngIf="rooms.length > 0 && viewMode === 'list'" class="bg-card border border-border-main rounded-xl overflow-hidden shadow-sm animate-fade-in">
     <div class="overflow-x-auto">
       <table class="w-full text-left border-collapse">
         <thead>
-          <tr class="bg-input text-muted text-xs uppercase tracking-wider border-b border-border-main">
+          <tr class="bg-input text-text-muted text-xs uppercase tracking-wider border-b border-border-main">
             <th class="p-4 font-semibold">Habitación</th>
             <th class="p-4 font-semibold">Tipo</th>
             <th class="p-4 font-semibold">Precio Base</th>
@@ -52,7 +131,7 @@
             </td>
             
             <td class="p-4">
-              <span class="px-2.5 py-1 bg-main border border-border-main rounded-md text-xs font-medium">
+              <span class="px-2.5 py-1 bg-input border border-border-main rounded-md text-xs font-medium">
                 {{ room.roomType }}
               </span>
             </td>
