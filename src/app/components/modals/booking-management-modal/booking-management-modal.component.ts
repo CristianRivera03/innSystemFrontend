@@ -8,11 +8,14 @@ import { RoomDTO } from '../../../models/room';
 import { UserDTO } from '../../../models/user';
 import { ResponseAPI } from '../../../models/response-api';
 import { CommonModule } from '@angular/common';
+import { RegistrerModalComponent } from '../registrer-modal/registrer-modal.component';
+import { RoleDTO } from '../../../models/role';
+import { RoleService } from '../../../services/role.service';
 
 @Component({
   selector: 'app-booking-management-modal',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, RegistrerModalComponent],
   templateUrl: './booking-management-modal.component.html',
 })
 export class BookingManagementModalComponent implements OnInit {
@@ -21,6 +24,7 @@ export class BookingManagementModalComponent implements OnInit {
   private bookingService = inject(BookingService);
   private roomService = inject(RoomService);
   private userService = inject(UserService);
+  private roleService = inject(RoleService);
 
   @Input() isOpen: boolean = false;
   @Input() bookingToEdit: BookingDTO | null = null;
@@ -30,9 +34,12 @@ export class BookingManagementModalComponent implements OnInit {
   bookingForm: FormGroup;
   rooms: RoomDTO[] = [];
   users: UserDTO[] = [];
+  roles: RoleDTO[] = [];
   isLoading = true;
   isSaving = false;
   isDarkMode = false;
+  
+  isRegisterModalOpen = false;
 
   // Assuming generic statuses since we don't have a catalog endpoint for booking statuses
   bookingStatuses = [
@@ -70,31 +77,53 @@ export class BookingManagementModalComponent implements OnInit {
 
   loadDependencies() {
     this.isLoading = true;
-    // Load users
-    this.userService.getAllUsers().subscribe({
+    
+    // Load roles for the register modal
+    this.roleService.getAllRoles().subscribe({
       next: (res: any) => {
-        this.users = res.value || res || [];
-        console.log("Usuarios cargados para el select:", this.users);
-        
-        // Load rooms
-        this.roomService.getAllRooms().subscribe({
-          next: (roomRes: any) => {
-            this.rooms = roomRes.value || roomRes || [];
-            console.log("Habitaciones cargadas para el select:", this.rooms);
-            
-            this.isLoading = false;
-          },
-          error: (err) => {
-            console.error("Error cargando habitaciones", err);
-            this.isLoading = false;
-          }
-        });
+        this.roles = res.value || res || [];
+      }
+    });
+
+    // Load users
+    this.loadUsers();
+
+    // Load rooms
+    this.roomService.getAllRooms().subscribe({
+      next: (roomRes: any) => {
+        this.rooms = roomRes.value || roomRes || [];
+        this.isLoading = false;
       },
       error: (err) => {
-        console.error("Error cargando usuarios", err);
+        console.error("Error cargando habitaciones", err);
         this.isLoading = false;
       }
     });
+  }
+
+  loadUsers() {
+    this.userService.getAllUsers().subscribe({
+      next: (res: any) => {
+        this.users = res.value || res || [];
+      },
+      error: (err) => {
+        console.error("Error cargando usuarios", err);
+      }
+    });
+  }
+
+  openRegisterModal(event: Event) {
+    event.preventDefault(); // Evitar submit del formulario
+    this.isRegisterModalOpen = true;
+  }
+
+  closeRegisterModal() {
+    this.isRegisterModalOpen = false;
+  }
+
+  onUserRegistered() {
+    this.loadUsers();
+    this.closeRegisterModal();
   }
 
   ngOnChanges(changes: SimpleChanges): void {

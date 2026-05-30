@@ -19,12 +19,19 @@
               <div class="flex flex-col">
   
                   <!-- Cliente (User) -->
-                  <div class="h-20 flex flex-col justify-start">
-                      <select class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full focus:outline-none focus:ring-2 focus:ring-brand appearance-none disabled:opacity-50" 
+                  <div class="flex flex-col justify-start">
+                      <div class="flex justify-between items-center mb-1">
+                          <label class="text-sm font-semibold text-text-main">Selecciona un cliente</label>
+                          <button class="text-xs font-semibold text-brand hover:text-brand/80 flex items-center gap-1 transition-colors"
+                                  (click)="openRegisterModal($event)">
+                              <span class="material-symbols-outlined text-[16px]">person_add</span> Nuevo Cliente
+                          </button>
+                      </div>
+                      <select class="p-2.5 rounded-xl border border-border-main bg-input text-text-main w-full focus:outline-none focus:ring-2 focus:ring-brand appearance-none disabled:opacity-50" 
                       formControlName="idUser">
-                          <option value="" disabled selected>Selecciona un cliente</option>
+                          <option value="" disabled selected>-- Elige un cliente --</option>
                           @for (user of users; track user.idUser) {
-                            <option [value]="user.idUser">{{ user.firstName }} {{ user.lastName }}</option>
+                            <option [value]="user.idUser">{{ user.firstName }} {{ user.lastName }} ({{ user.email }})</option>
                           }
                       </select>
                       
@@ -34,10 +41,11 @@
                   </div>
   
                   <!-- Habitación (Room) -->
-                  <div class="h-20 flex flex-col justify-start">
-                      <select class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full focus:outline-none focus:ring-2 focus:ring-brand appearance-none disabled:opacity-50" 
+                  <div class="flex flex-col justify-start mt-4">
+                      <label class="text-sm font-semibold mb-1 text-text-main">Selecciona una habitación</label>
+                      <select class="p-2.5 rounded-xl border border-border-main bg-input text-text-main w-full focus:outline-none focus:ring-2 focus:ring-brand appearance-none disabled:opacity-50" 
                       formControlName="idRoom">
-                          <option value="" disabled selected>Selecciona una habitación</option>
+                          <option value="" disabled selected>-- Elige una habitación --</option>
                           @for (room of rooms; track room.idRoom) {
                             <option [value]="room.idRoom">Habitación {{ room.roomNumber }}</option>
                           }
@@ -107,4 +115,11 @@
       </div>
     </div>
   </div>
+
+  <app-registrer-modal
+      [isOpen]="isRegisterModalOpen"
+      [roles]="roles"
+      (onClose)="closeRegisterModal()"
+      (onUserCreated)="onUserRegistered()">
+  </app-registrer-modal>
 }
