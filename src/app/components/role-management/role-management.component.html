@@ -1,98 +1,79 @@
-<div class="bg-main min-h-screen p-8 animate-fade-in">
-  <div class="max-w-4xl mx-auto bg-card rounded-2xl shadow-sm border border-border-main p-6">
-    
-    <div class="mb-8">
-      <h2 class="text-2xl font-bold text-brand">Gestión de Permisos</h2>
-      <p class="text-text-muted mt-1">Configura a qué módulos tiene acceso cada rol del sistema.</p>
-    </div>
-    
-    <div class="mb-8 p-4 bg-main/30 rounded-xl border-border-main flex flex-col md:flex-row gap-4 items-end">
-      <div class="flex-1 w-full">
-        <label for="new-role" class="block text-sm font-medium text-text-main mb-2">Crear nuevo rol</label>
+<div class="cds-content cds-animate-fade-in">
 
-        <input type="text"
-        id = "new-role"
-        [(ngModel)] = "newRoleName"
-        placeholder="Ej : Auditor, Supervisor"
-        class="w-full p-3 rounded-xl border-border-main bg-input text-text-main focus:ring-brand focus:outline-none"
-        >
-      </div>
+    <div style="max-width:56rem; margin:0 auto;">
 
-      <button
-      (click)="createNewRole()"
-      [disabled]="!newRoleName"
-      class="bg-brand text-white px-6 py-3 rounded-xl font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed h-fit" 
-      >
-        Crear Rol
-      </button>
-    </div>
-    
-    <hr class="border-border-main mb-8">
-
-    <div class="mb-6">
-      <label for="role-select" class="block text-sm font-medium text-text-main mb-2">Selecciona un Rol</label>
-      
-
-
-
-      <select 
-        id="role-select"
-        aria-label="Menú para seleccionar el rol a configurar"
-        (change)="onRoleChange($event)"
-        class="w-full md:w-1/2 p-3 rounded-xl border border-border-main bg-input text-text-main focus:ring-2 focus:ring-brand focus:outline-none">
-        <option value="0">-- Seleccione un rol --</option>
-        
-        @for (role of roles; track role.idRole) {
-          <option [value]="role.idRole">{{ role.roleName }}</option>
-        }
-      </select>
-    </div>
-
-    <div class="bg-input border border-border-main rounded-xl overflow-hidden">
-      
-      @if (selectedRoleId === 0) {
-        <div class="p-8 text-center text-text-muted">
-          <span class="material-symbols-outlined text-4xl mb-2 opacity-50">lock</span>
-          <p>Selecciona un rol arriba para ver y modificar sus permisos.</p>
-        </div>
-      } @else {
-        
-        @for (modulo of modules; track modulo.idModule) {
-          <div class="flex items-center justify-between p-4 border-b border-border-main hover:bg-main/50 transition-colors last:border-b-0">
-            
-            <div class="flex items-center gap-3">
-              <span class="material-symbols-outlined text-text-muted">{{ modulo.icon }}</span>
-              <div>
-                <p class="font-bold text-text-main">{{ modulo.name }}</p>
-                <p class="text-xs text-text-muted">Ruta protegida: {{ modulo.frontendPath }}</p>
-              </div>
+        <div class="cds-page-header">
+            <div>
+                <h1 class="cds-page-header__title">Gestión de Permisos</h1>
+                <p class="cds-page-header__subtitle">Configura a qué módulos tiene acceso cada rol del sistema.</p>
             </div>
+        </div>
 
-            <label class="relative inline-flex items-center cursor-pointer">
-              <input 
-                type="checkbox" 
-                [id]="'switch-' + modulo.idModule"
-                class="sr-only peer"
-                [checked]="selectedModuleIds.includes(modulo.idModule)"
-                (change)="toggleModule(modulo.idModule)">
-              
-              <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand"></div>
-            </label>
+        <!-- Create Role -->
+        <div class="cds-card" style="margin-bottom:1.5rem;">
+            <div style="display:flex; flex-direction:column; gap:1rem;">
+                <div class="cds-form-item" style="margin-bottom:0; flex:1;">
+                    <label class="cds-label" for="new-role">Crear nuevo rol</label>
+                    <input class="cds-text-input" type="text" id="new-role"
+                        [(ngModel)]="newRoleName"
+                        placeholder="Ej: Auditor, Supervisor">
+                </div>
+                <button class="cds-btn-primary" (click)="createNewRole()" [disabled]="!newRoleName" style="align-self:flex-start;">
+                    Crear Rol
+                </button>
+            </div>
+        </div>
 
-          </div>
-        }
-      }
+        <hr class="cds-divider">
 
+        <!-- Select Role -->
+        <div class="cds-form-item">
+            <label class="cds-label" for="role-select">Selecciona un Rol</label>
+            <select class="cds-select" id="role-select" aria-label="Menú para seleccionar el rol a configurar" (change)="onRoleChange($event)" style="max-width:24rem;">
+                <option value="0">-- Seleccione un rol --</option>
+                @for (role of roles; track role.idRole) {
+                    <option [value]="role.idRole">{{ role.roleName }}</option>
+                }
+            </select>
+        </div>
+
+        <!-- Permission List -->
+        <div class="cds-permission-list" style="margin-top:1rem;">
+
+            @if (selectedRoleId === 0) {
+                <div style="padding:3rem; text-align:center; color:var(--cds-text-secondary);">
+                    <span class="material-symbols-outlined" style="font-size:2.5rem; margin-bottom:0.5rem; opacity:0.5; display:block;">lock</span>
+                    <p>Selecciona un rol arriba para ver y modificar sus permisos.</p>
+                </div>
+            } @else {
+
+                @for (modulo of modules; track modulo.idModule) {
+                    <div class="cds-permission-item">
+                        <div class="cds-permission-item__info">
+                            <span class="material-symbols-outlined">{{ modulo.icon }}</span>
+                            <div>
+                                <p style="font-weight:500; font-size:0.875rem; color:var(--cds-text-primary);">{{ modulo.name }}</p>
+                                <p style="font-size:0.75rem; color:var(--cds-text-secondary);">{{ modulo.frontendPath }}</p>
+                            </div>
+                        </div>
+
+                        <label class="cds-toggle">
+                            <input type="checkbox"
+                                [id]="'switch-' + modulo.idModule"
+                                [checked]="selectedModuleIds.includes(modulo.idModule)"
+                                (change)="toggleModule(modulo.idModule)">
+                            <div class="cds-toggle__track"></div>
+                        </label>
+                    </div>
+                }
+            }
+        </div>
+
+        <!-- Save -->
+        <div style="margin-top:1.5rem; display:flex; justify-content:flex-end;">
+            <button class="cds-btn-primary" (click)="savePermissions()" [disabled]="selectedRoleId === 0">
+                Guardar Permisos
+            </button>
+        </div>
     </div>
-
-    <div class="mt-6 flex justify-end">
-      <button 
-        (click)="savePermissions()"
-        [disabled]="selectedRoleId === 0"
-        class="bg-brand text-white px-6 py-2 rounded-xl font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed">
-        Guardar Permisos
-      </button>
-    </div>
-
-  </div>
 </div>

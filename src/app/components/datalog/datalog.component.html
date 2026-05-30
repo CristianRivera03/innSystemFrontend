@@ -1,1 +1,88 @@
-<h2 class="text-brand">Se encuentra en desarrollo</h2>
+<div class="cds-content cds-animate-fade-in">
+    <div class="cds-page-header">
+        <div>
+            <h1 class="cds-page-header__title">Bitácora del Sistema (Datalog)</h1>
+            <p class="cds-page-header__subtitle">Auditoría en tiempo real de las acciones, ingresos y modificaciones de recursos.</p>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; margin-bottom:1.5rem;">
+        <div class="cds-form-item" style="margin-bottom:0;">
+            <label class="cds-label" for="log-search">Buscar en logs</label>
+            <input class="cds-text-input" type="text" id="log-search" placeholder="Ej: ID de usuario, acción...">
+        </div>
+        <div class="cds-form-item" style="margin-bottom:0;">
+            <label class="cds-label" for="log-level">Módulo</label>
+            <select class="cds-select" id="log-level">
+                <option value="all">Todos los módulos</option>
+                <option value="auth">Autenticación</option>
+                <option value="bookings">Reservas</option>
+                <option value="rooms">Habitaciones</option>
+                <option value="users">Usuarios</option>
+            </select>
+        </div>
+        <div class="cds-form-item" style="margin-bottom:0;">
+            <label class="cds-label" for="log-date">Fecha</label>
+            <input class="cds-text-input" type="date" id="log-date">
+        </div>
+    </div>
+
+    <!-- Data Table -->
+    <div class="cds-table-container">
+        <table class="cds-table">
+            <thead>
+                <tr>
+                    <th>Fecha/Hora</th>
+                    <th>Usuario</th>
+                    <th>Módulo</th>
+                    <th>Acción</th>
+                    <th>Descripción</th>
+                    <th>Dirección IP</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="white-space:nowrap; font-family:monospace; font-size:0.75rem; color:var(--cds-text-secondary);">2026-05-30 04:22:15</td>
+                    <td style="font-weight:500;">admin&#64;innsystem.com</td>
+                    <td><span class="cds-tag cds-tag--purple">Autenticación</span></td>
+                    <td><strong>LOGIN_SUCCESS</strong></td>
+                    <td>Inicio de sesión exitoso en el panel web.</td>
+                    <td style="font-family:monospace; font-size:0.75rem;">192.168.1.45</td>
+                </tr>
+                <tr>
+                    <td style="white-space:nowrap; font-family:monospace; font-size:0.75rem; color:var(--cds-text-secondary);">2026-05-30 04:18:02</td>
+                    <td style="font-weight:500;">recepcion&#64;innsystem.com</td>
+                    <td><span class="cds-tag cds-tag--blue">Reservas</span></td>
+                    <td><strong>CREATE_BOOKING</strong></td>
+                    <td>Creada reserva #1024 para cliente Juan Pérez.</td>
+                    <td style="font-family:monospace; font-size:0.75rem;">192.168.1.112</td>
+                </tr>
+                <tr>
+                    <td style="white-space:nowrap; font-family:monospace; font-size:0.75rem; color:var(--cds-text-secondary);">2026-05-30 03:55:40</td>
+                    <td style="font-weight:500;">admin&#64;innsystem.com</td>
+                    <td><span class="cds-tag cds-tag--cyan">Habitaciones</span></td>
+                    <td><strong>UPDATE_ROOM</strong></td>
+                    <td>Modificado precio base de habitación 101.</td>
+                    <td style="font-family:monospace; font-size:0.75rem;">192.168.1.45</td>
+                </tr>
+                <tr>
+                    <td style="white-space:nowrap; font-family:monospace; font-size:0.75rem; color:var(--cds-text-secondary);">2026-05-30 02:40:11</td>
+                    <td style="font-weight:500;">recepcion&#64;innsystem.com</td>
+                    <td><span class="cds-tag cds-tag--blue">Reservas</span></td>
+                    <td><strong>UPDATE_STATUS</strong></td>
+                    <td>Reserva #1019 cambiada a Completada (Check-out).</td>
+                    <td style="font-family:monospace; font-size:0.75rem;">192.168.1.112</td>
+                </tr>
+                <tr>
+                    <td style="white-space:nowrap; font-family:monospace; font-size:0.75rem; color:var(--cds-text-secondary);">2026-05-29 23:12:45</td>
+                    <td style="font-weight:500;">admin&#64;innsystem.com</td>
+                    <td><span class="cds-tag cds-tag--red">Usuarios</span></td>
+                    <td><strong>CREATE_USER</strong></td>
+                    <td>Nuevo usuario registrado con rol Recepcionista.</td>
+                    <td style="font-family:monospace; font-size:0.75rem;">192.168.1.45</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,60 +1,52 @@
 @if (isOpen) {
-  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
-    <div class="bg-card w-full max-w-md rounded-2xl shadow-2xl border border-border-main relative p-8 animate-slide-up">
-      
-      <button 
-          (click)="closeModal()" 
-          class="absolute top-4 right-4 text-text-muted hover:text-red-500 transition-colors">
-          <span class="material-symbols-outlined">close</span>
-      </button>
-  
-      <div class="mb-6">
-          <h2 class="text-2xl font-bold text-center text-brand mb-4">
-              {{ typeToEdit ? 'Editar Tipo de Habitación' : 'Nuevo Tipo de Habitación' }}
-          </h2>
-          
-          <form class="flex flex-col gap-1" [formGroup]="typeForm" (ngSubmit)="onSubmit()">
-              <div class="flex flex-col max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
-  
-                  <div class="h-24 flex flex-col justify-start">
-                      <label class="text-sm font-medium text-text-main mb-1">Nombre</label>
-                      <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand disabled:opacity-50" 
-                      type="text" formControlName="name" placeholder="Ej. Suite">
-                      
-                      @if(typeForm.get('name')?.invalid && typeForm.get('name')?.touched){
-                          <small class="text-red-500 mt-1 block animate-fade-in">El nombre es requerido</small>
-                      }
-                  </div>
-  
-                  <div class="h-24 flex flex-col justify-start">
-                      <label class="text-sm font-medium text-text-main mb-1">Capacidad de Personas</label>
-                      <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand disabled:opacity-50" 
-                      type="number" formControlName="guestCapacity" placeholder="Ej. 2">
-                      
-                      @if(typeForm.get('guestCapacity')?.invalid && typeForm.get('guestCapacity')?.touched){
-                          <small class="text-red-500 mt-1 block animate-fade-in">Ingresa una capacidad válida mayor a 0</small>
-                      }
-                  </div>
-  
-                  <div class="h-32 flex flex-col justify-start">
-                      <label class="text-sm font-medium text-text-main mb-1">Descripción (Opcional)</label>
-                      <textarea class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand resize-none" 
-                      formControlName="description" rows="3" placeholder="Descripción detallada..."></textarea>
-                  </div>
-                  
-              </div>  
-  
-              <button class="bg-brand py-2 rounded-xl text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50 mt-2 flex justify-center items-center gap-2" 
-                      type="submit" [disabled]="typeForm.invalid || isSaving">
-                      @if (isSaving) {
-                        <span class="material-symbols-outlined animate-spin">progress_activity</span>
-                        {{ typeToEdit ? 'Actualizando...' : 'Guardando...' }}
-                      } @else {
-                        {{ typeToEdit ? 'Actualizar Tipo' : 'Guardar Tipo' }}
-                      }
-              </button>
-          </form>  
-      </div>
+    <div class="cds-modal-overlay">
+        <div class="cds-modal" style="max-width:32rem;">
+
+            <div class="cds-modal__header">
+                <h2 class="cds-modal__title">{{ typeToEdit ? 'Editar Tipo de Habitación' : 'Nuevo Tipo de Habitación' }}</h2>
+                <button class="cds-modal__close" (click)="closeModal()">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <div class="cds-modal__body">
+                <form [formGroup]="typeForm" (ngSubmit)="onSubmit()" style="display:flex; flex-direction:column; gap:1rem;">
+                    
+                    <!-- Nombre -->
+                    <div class="cds-form-item">
+                        <label class="cds-label" for="rt-name">Nombre</label>
+                        <input class="cds-text-input" type="text" id="rt-name" formControlName="name" placeholder="Ej: Suite Deluxe">
+                        @if(typeForm.get('name')?.invalid && typeForm.get('name')?.touched){
+                            <small class="cds-form-error">El nombre es requerido</small>
+                        }
+                    </div>
+
+                    <!-- Capacidad -->
+                    <div class="cds-form-item">
+                        <label class="cds-label" for="rt-capacity">Capacidad de Huéspedes</label>
+                        <input class="cds-text-input" type="number" id="rt-capacity" formControlName="guestCapacity" placeholder="Ej: 4">
+                        @if(typeForm.get('guestCapacity')?.invalid && typeForm.get('guestCapacity')?.touched){
+                            <small class="cds-form-error">Ingresa una capacidad válida mayor a 0</small>
+                        }
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="cds-form-item">
+                        <label class="cds-label" for="rt-desc">Descripción (Opcional)</label>
+                        <textarea class="cds-text-input" id="rt-desc" formControlName="description" rows="3" placeholder="Descripción de la categoría..." style="resize:none; min-height:5rem; height:auto;"></textarea>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button class="cds-btn-primary" type="submit" [disabled]="typeForm.invalid || isSaving" style="margin-top:1rem; display:flex; justify-content:center; align-items:center; gap:0.5rem; width:100%;">
+                        @if (isSaving) {
+                            <span class="material-symbols-outlined" style="animation:cds-spin 0.7s linear infinite; font-size:1.125rem;">progress_activity</span>
+                            {{ typeToEdit ? 'Actualizando...' : 'Guardando...' }}
+                        } @else {
+                            {{ typeToEdit ? 'Actualizar Tipo' : 'Guardar Tipo' }}
+                        }
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
-  </div>
 }

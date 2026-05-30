@@ -17,6 +17,7 @@ export class RegistrerModalComponent implements OnInit, OnChanges {
   @Input() isOpen: boolean = false;
   @Input() roles: RoleDTO[] = [];
   @Input() userToEdit: UserDTO | null = null; 
+  @Input() isClientOnly: boolean = false;
 
   @Output() onClose = new EventEmitter<void>();
   @Output() onUserCreated = new EventEmitter<void>(); 
@@ -37,7 +38,7 @@ export class RegistrerModalComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['userToEdit'] || changes['isOpen']) {
+    if (changes['userToEdit'] || changes['isOpen'] || changes['roles']) {
       if(this.isOpen) {
          this.initForm();
       }
@@ -45,8 +46,16 @@ export class RegistrerModalComponent implements OnInit, OnChanges {
   }
 
   initForm() {
+    let initialRoleId = this.userToEdit?.idRole || '';
+    if (this.isClientOnly && !this.userToEdit && this.roles.length > 0) {
+      const clientRole = this.roles.find(r => r.roleName.toLowerCase().includes('client'));
+      if (clientRole) {
+        initialRoleId = clientRole.idRole;
+      }
+    }
+
     this.signUpForm = this.fb.group({
-      idRole: [this.userToEdit?.idRole || '', [Validators.required]],
+      idRole: [initialRoleId, [Validators.required]],
       firstName: [this.userToEdit?.firstName || '', [Validators.required]],
       lastName: [this.userToEdit?.lastName || '', [Validators.required]],
       phone: [this.userToEdit?.phone || ''],

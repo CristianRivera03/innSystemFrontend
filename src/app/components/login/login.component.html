@@ -1,74 +1,59 @@
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+<div class="cds-login-wrapper">
 
-<div class="bg-main min-h-screen flex justify-center items-center transition-colors duration-300">
-    
-<div class="bg-card grid grid-cols-1 md:grid-cols-2 gap-8 shadow-2xl w-full max-w-5xl p-10 aspect-[16/9] rounded-3xl border border-border-main transition-colors duration-300">
+    <div class="cds-login-card cds-animate-fade-in">
 
-        <!-- formulario -->
-        <div class="px-4 flex flex-col justify-center">
-            <h2 class="font-bold text-2xl text-brand">Login</h2>
-            <p class="text-sm mt-4 text-text-main">Si ya tienes una cuenta puedes acceder con tu correo electrónico</p>
-            
-            <form class="flex flex-col gap-4" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-            
-                <div class="mt-8">
-                    <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand" 
-                    type="email" formControlName="email" placeholder="tucorreo@mail.com">
+        <!-- Formulario -->
+        <div class="cds-login-form">
+            <h1>Iniciar Sesión</h1>
+            <p>Accede al sistema de gestión hotelera con tu cuenta.</p>
+
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" style="display:flex; flex-direction:column; gap:1.25rem;">
+
+                <div class="cds-form-item">
+                    <label class="cds-label">Correo Electrónico</label>
+                    <input class="cds-text-input" type="email" formControlName="email" placeholder="tucorreo@mail.com">
                     @if(loginForm.get('email')?.invalid && loginForm.get('email')?.touched){
-                        <small class="text-red-500 mt-1 block">Ingresa un correo válido</small>
+                        <small class="cds-form-error">Ingresa un correo válido</small>
                     }
                 </div>
 
-                <div class="relative mt-2">
-                    <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand pr-10" 
-                           type="password" formControlName="password" placeholder="Ingresa tu contraseña">
-                    <span class="material-symbols-outlined absolute top-1/2 right-3 -translate-y-1/2 text-text-muted cursor-pointer hover:text-brand transition-colors">visibility</span>
+                <div class="cds-form-item">
+                    <label class="cds-label">Contraseña</label>
+                    <div style="position:relative;">
+                        <input class="cds-text-input" type="password" formControlName="password" placeholder="Ingresa tu contraseña" style="padding-right:2.5rem;">
+                        <span class="material-symbols-outlined" style="position:absolute; top:50%; right:0.75rem; transform:translateY(-50%); color:var(--cds-text-secondary); cursor:pointer; font-size:1.25rem;">visibility</span>
+                    </div>
                 </div>
-        
-                <button class="bg-brand py-2 rounded-xl text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50 mt-2" 
-                        type="submit" [disabled]="loginForm.invalid">
+
+                <button class="cds-btn-primary" type="submit" [disabled]="loginForm.invalid" style="width:100%; margin-top:0.5rem;">
                     Ingresar
                 </button>
-            </form>  
+            </form>
         </div>
 
+        <!-- Imagen -->
+        <div class="cds-login-image">
+            <img
+              style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition: opacity 0.6s ease;"
+              src="/photo/login-photo.jpg"
+              alt="Hotel Continental"
+              [style.opacity]="isDarkMode ? '0' : '1'">
 
-        <!-- imagen -->
-        <div class="sm:block hidden relative">
-            
-            <img 
-              class="absolute inset-0 rounded-2xl h-full w-full object-cover transition-opacity duration-1000 ease-in-out" 
-              src="/photo/login-photo.jpg" 
-              alt="Login Light"
-              [class.opacity-100]="!isDarkMode"
-              [class.opacity-0]="isDarkMode">
-
-            <img 
-              class="absolute inset-0 rounded-2xl h-full w-full object-cover transition-opacity duration-1000 ease-in-out" 
-              src="/photo/login-photo-night.png" 
-              alt="Login Dark"
-              [class.opacity-100]="isDarkMode"
-              [class.opacity-0]="!isDarkMode">
+            <img
+              style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition: opacity 0.6s ease;"
+              src="/photo/login-photo-night.png"
+              alt="Hotel Continental — Noche"
+              [style.opacity]="isDarkMode ? '1' : '0'">
         </div>
 
-        
     </div>
-    
 
-    <button 
-        type="button"
-        (click)="toggleTheme()" 
-        class="p-2 rounded-full bg-input border border-border-main shadow-sm hover:opacity-80 transition-all duration-300 flex items-center justify-center">
-        
+    <!-- Theme Toggle -->
+    <button type="button" (click)="toggleTheme()" class="cds-login-theme-btn">
         @if(isDarkMode) {
-        <span class="material-symbols-outlined text-yellow-400">light_mode</span>
+            <span class="material-symbols-outlined" style="color:var(--cds-support-warning); font-size:1.25rem;">light_mode</span>
         } @else {
-        <span class="material-symbols-outlined text-brand transition-colors">dark_mode</span>
+            <span class="material-symbols-outlined" style="font-size:1.25rem;">dark_mode</span>
         }
     </button>
 </div>
-
-
-
-
-                

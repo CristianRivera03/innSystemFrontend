@@ -1,109 +1,103 @@
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-
 @if (isOpen) {
-  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in overflow-y-auto">
-    <div class="bg-card w-full max-w-lg rounded-2xl shadow-2xl border border-border-main relative p-8 animate-slide-up my-auto">
-    
-    <button 
-        (click)="closeModal()" 
-        class="absolute top-4 right-4 text-text-muted hover:text-red-500 transition-colors">
-        <span class="material-symbols-outlined">close</span>
-    </button>
+    <div class="cds-modal-overlay">
+        <div class="cds-modal" style="max-width:36rem;">
 
-    <div class="mb-6">
-        <h2 class="text-2xl font-bold text-center text-brand mb-4">{{ userToEdit ? 'Actualizar Usuario' : 'Registrar Usuario' }}</h2>
-        <form class="flex flex-col gap-1" [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
+            <div class="cds-modal__header">
+                <h2 class="cds-modal__title">{{ userToEdit ? 'Actualizar Usuario' : (isClientOnly ? 'Registrar Cliente' : 'Registrar Usuario') }}</h2>
+                <button class="cds-modal__close" (click)="closeModal()">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
 
-            <div class="flex flex-col">
+            <div class="cds-modal__body">
+                <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()" style="display:flex; flex-direction:column; gap:1rem;">
 
-                <div class="h-20 flex flex-col justify-start">
                     <!-- Rol -->
-                    <select class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand appearance-none" 
-                    formControlName="idRole">
-                        <option value="" disabled selected>Selecciona un rol</option>
-                        @for (role of roles; track role.idRole) {
-                            <option [value]="role.idRole">{{role.roleName}}</option>
-                        }
-                    </select>
-                    @if(signUpForm.get('idRole')?.invalid && signUpForm.get('idRole')?.touched){
-                        <small class="text-red-500 mt-1 block">Selecciona un rol</small>
+                    @if (!isClientOnly) {
+                        <div class="cds-form-item">
+                            <label class="cds-label" for="reg-role">Rol de Usuario</label>
+                            <select class="cds-select" id="reg-role" formControlName="idRole">
+                                <option value="" disabled selected>Selecciona un rol</option>
+                                @for (role of roles; track role.idRole) {
+                                    <option [value]="role.idRole">{{ role.roleName }}</option>
+                                }
+                            </select>
+                            @if(signUpForm.get('idRole')?.invalid && signUpForm.get('idRole')?.touched){
+                                <small class="cds-form-error">Selecciona un rol</small>
+                            }
+                        </div>
                     }
-                </div>
 
-                <div class="flex gap-4">
-                    <div class="h-20 flex flex-col justify-start w-1/2">
-                        <!-- Primer nombre -->
-                        <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand" 
-                        type="text" formControlName="firstName" placeholder="Primer nombre">
-                        @if(signUpForm.get('firstName')?.invalid && signUpForm.get('firstName')?.touched){
-                            <small class="text-red-500 mt-1 block">Ingresa el nombre</small>
-                        }
-                    </div>
-
-                    <div class="h-20 flex flex-col justify-start w-1/2">
-                        <!-- Apellido  -->
-                        <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand" 
-                        type="text" formControlName="lastName" placeholder="Apellido">
-                        @if(signUpForm.get('lastName')?.invalid && signUpForm.get('lastName')?.touched){
-                            <small class="text-red-500 mt-1 block">Ingresa el apellido</small>
-                        }
-                    </div>   
-                </div>
-
-                <div class="flex gap-4">
-                    <div class="h-20 flex flex-col justify-start w-1/2">
-                        <!-- DUI -->
-                        <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand" 
-                        type="text" formControlName="documentId" placeholder="DUI (Opcional)">
-                    </div>
-
-                    <div class="h-20 flex flex-col justify-start w-1/2">
-                        <!-- Teléfono  -->
-                        <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand" 
-                        type="text" formControlName="phone" placeholder="Teléfono (Opcional)">
-                    </div>   
-                </div>
-
-                @if (!userToEdit) {
-                    <div class="h-20 flex flex-col justify-start">
-                        <!-- Email -->
-                        <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand" 
-                        type="email" formControlName="email" placeholder="correo@ejemplo.com">
-                        @if(signUpForm.get('email')?.invalid && signUpForm.get('email')?.touched){
-                            <small class="text-red-500 mt-1 block">Ingresa un correo válido</small>
-                        }
-                    </div>
-                    
-                    <div class="h-20 flex flex-col justify-start">
-                        <div class="relative">
-                            <!-- Password -->
-                            <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand pr-10" 
-                            type="password" formControlName="password" placeholder="Ingresa una contraseña">
-                            <span class="material-symbols-outlined absolute top-1/2 right-3 -translate-y-1/2 text-text-muted cursor-pointer hover:text-brand transition-colors">visibility</span>
+                    <!-- Nombre y Apellido -->
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                        <div class="cds-form-item">
+                            <label class="cds-label" for="reg-firstname">Primer Nombre</label>
+                            <input class="cds-text-input" type="text" id="reg-firstname" formControlName="firstName" placeholder="Nombre">
+                            @if(signUpForm.get('firstName')?.invalid && signUpForm.get('firstName')?.touched){
+                                <small class="cds-form-error">Ingresa el nombre</small>
+                            }
                         </div>
 
-                        @if(signUpForm.get("password")?.invalid && signUpForm.get("password")?.touched){
-                            <small class="text-red-500 mt-1 pl-1 block text-left animate-fade-in ">La contraseña es requerida</small>
-                        }
+                        <div class="cds-form-item">
+                            <label class="cds-label" for="reg-lastname">Apellido</label>
+                            <input class="cds-text-input" type="text" id="reg-lastname" formControlName="lastName" placeholder="Apellido">
+                            @if(signUpForm.get('lastName')?.invalid && signUpForm.get('lastName')?.touched){
+                                <small class="cds-form-error">Ingresa el apellido</small>
+                            }
+                        </div>
                     </div>
-                } @else {
-                    <div class="h-10 flex items-center justify-start mb-4">
-                         <label class="flex items-center cursor-pointer">
-                           <input type="checkbox" formControlName="isActive" class="sr-only peer">
-                           <div class="w-11 h-6 bg-border-main peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-brand rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand relative"></div>
-                           <span class="ml-3 text-sm font-medium text-text-main">Usuario Activo</span>
-                         </label>
-                    </div>
-                }
-            </div>  
-            
-            <button class="bg-brand py-2 rounded-xl text-white font-bold hover:opacity-90 transition-opacity disabled:opacity-50 mt-2" 
-                    type="submit" [disabled]="signUpForm.invalid">
-                {{ userToEdit ? 'Guardar Cambios' : 'Crear Usuario' }}
-            </button>
-        </form>  
-    </div>
 
+                    <!-- DUI y Teléfono -->
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                        <div class="cds-form-item">
+                            <label class="cds-label" for="reg-document">DUI (Opcional)</label>
+                            <input class="cds-text-input" type="text" id="reg-document" formControlName="documentId" placeholder="Ej: 00000000-0">
+                        </div>
+
+                        <div class="cds-form-item">
+                            <label class="cds-label" for="reg-phone">Teléfono (Opcional)</label>
+                            <input class="cds-text-input" type="text" id="reg-phone" formControlName="phone" placeholder="Ej: 7777-7777">
+                        </div>
+                    </div>
+
+                    @if (!userToEdit) {
+                        <!-- Email -->
+                        <div class="cds-form-item">
+                            <label class="cds-label" for="reg-email">Correo Electrónico</label>
+                            <input class="cds-text-input" type="email" id="reg-email" formControlName="email" placeholder="correo@ejemplo.com">
+                            @if(signUpForm.get('email')?.invalid && signUpForm.get('email')?.touched){
+                                <small class="cds-form-error">Ingresa un correo válido</small>
+                            }
+                        </div>
+                        
+                        <!-- Contraseña -->
+                        <div class="cds-form-item">
+                            <label class="cds-label" for="reg-pass">Contraseña</label>
+                            <div style="position:relative;">
+                                <input class="cds-text-input" type="password" id="reg-pass" formControlName="password" placeholder="Ingresa una contraseña" style="padding-right:2.5rem;">
+                                <span class="material-symbols-outlined" style="position:absolute; right:0.75rem; top:50%; transform:translateY(-50%); color:var(--cds-text-secondary); cursor:pointer;">visibility</span>
+                            </div>
+                            @if(signUpForm.get("password")?.invalid && signUpForm.get("password")?.touched){
+                                <small class="cds-form-error">La contraseña es requerida</small>
+                            }
+                        </div>
+                    } @else {
+                        <!-- IsActive (Toggle) -->
+                        <div class="cds-form-item" style="flex-direction:row; align-items:center; gap:0.75rem; margin-top:0.5rem;">
+                            <label class="cds-toggle">
+                                <input type="checkbox" formControlName="isActive" id="reg-active">
+                                <div class="cds-toggle__track"></div>
+                            </label>
+                            <label class="cds-label" for="reg-active" style="margin-bottom:0; cursor:pointer;">Usuario Activo</label>
+                        </div>
+                    }
+
+                    <!-- Botón de acción -->
+                    <button class="cds-btn-primary" type="submit" [disabled]="signUpForm.invalid" style="margin-top:1rem; width:100%;">
+                        {{ userToEdit ? 'Guardar Cambios' : 'Crear Usuario' }}
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
-  </div>
 }

@@ -1,85 +1,132 @@
-<div class="bg-main">
-    <header class="">
+<div class="cds-content cds-animate-fade-in">
 
-        <div class="text-brand">
-            <span>Bienvenido, <strong>{{currentUser?.firstName}} {{currentUser?.lastName}}</strong></span>
-            <button class="btn-logout" (click)="logout()" >Cerrar Sesión</button>
+    <!-- Greeting -->
+    <div class="cds-dashboard-greeting">
+        <h1>Bienvenido, {{ currentUser?.firstName }}</h1>
+        <p>{{ currentDate | date:'EEEE, d MMMM yyyy' }} — Panel de control de Hotel Continental</p>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="cds-kpi-grid">
+
+        <div class="cds-kpi-card">
+            <span class="material-symbols-outlined cds-kpi-card__icon">calendar_month</span>
+            <span class="cds-kpi-card__label">Total Reservas</span>
+            <span class="cds-kpi-card__value">{{ totalBookings }}</span>
+            <span class="cds-kpi-card__footer">Todas las reservas del sistema</span>
         </div>
-    </header>
 
+        <div class="cds-kpi-card">
+            <span class="material-symbols-outlined cds-kpi-card__icon">pending_actions</span>
+            <span class="cds-kpi-card__label">Pendientes</span>
+            <span class="cds-kpi-card__value" style="color: var(--cds-support-warning);">{{ pendingBookings }}</span>
+            <span class="cds-kpi-card__footer">Reservas por confirmar</span>
+        </div>
 
-    <main class="dashboard-content">
+        <div class="cds-kpi-card">
+            <span class="material-symbols-outlined cds-kpi-card__icon">bed</span>
+            <span class="cds-kpi-card__label">Habitaciones Activas</span>
+            <span class="cds-kpi-card__value" style="color: var(--cds-support-success);">{{ activeRooms }}</span>
+            <span class="cds-kpi-card__footer">De {{ totalRooms }} habitaciones totales</span>
+        </div>
 
-        <section class="create-post-section card">
-            <h2>Crear nueva publicacion</h2>
+        <div class="cds-kpi-card">
+            <span class="material-symbols-outlined cds-kpi-card__icon">payments</span>
+            <span class="cds-kpi-card__label">Ingresos Estimados</span>
+            <span class="cds-kpi-card__value">${{ estimatedRevenue | number:'1.2-2' }}</span>
+            <span class="cds-kpi-card__footer">Excluyendo canceladas y no show</span>
+        </div>
 
-            <!-- declaracion de formularioo -->
-            <form [formGroup]="postForm" (ngSubmit)="createPost()">
-                <div class="form-group">
-                    <input type="text" formControlName="titlePost" placeholder="Titulo de la publicacion">
-                    @if (postForm.get('titlePost')?.invalid && postForm.get('titlePost')?.touched){
-                        <small class="error-text">El título es obligatorio (Máx. 100 caracteres).</small>
-                    }
-                </div>
+    </div>
 
+    <!-- Dashboard Grid: Recent Bookings + Room Status -->
+    <div class="cds-dashboard-grid">
 
-                <div class="form-group">
-                    <textarea formControlName="contentPost" rows="3" placeholder="¿Que estas pensando?"></textarea>
-                    @if (postForm.get('contentPost')?.invalid && postForm.get('contentPost')?.touched) {
-                        <small class="error-text">El contenido es obligatorio.</small>
-                    }
-                </div>
-
-                <!-- boton para crear -->
-                <div class="form-actions">
-                    <button class="bg-brand px-4 py-2 rounded-xl text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50 mt-2" type="submit" [disabled]="postForm.invalid">Publicar</button>
-                </div>
-            </form>
-        </section>
-
-
-        <!-- sección de publicaciones -->
-        <section class="text-white">
-            <h2>Ultimas publicaciones</h2>
-
-            <div class="post-grid">
-                @for (post of posts; track post.idPost) {
-                    <article class="p-4 bg-card my-2 rounded-xl">
-                        <div class="post-header">
-                            <div class="flex gap-3 items-center ">
-                                <span class="w-10 h-10 rounded-full bg-brand text-white flex items-center justify-center font-bold shadow-sm">{{post.completeNameUser.charAt(0)}}</span>
-                                <strong>{{post.completeNameUser}}</strong>
-                                <span class="category-badge">{{post.nameCategory}}</span>
-                            </div>
-                            <small class="post-date">{{post.publishedAt | date:'medium'}}</small>
-                        </div>
-
-                        <!-- cuerpo de publicacion -->
-                        <h3>{{post.titlePost}}</h3>
-                        <p>{{post.contentPost}}</p>
-
-                        <div class="mt-2">
-                            @if(
-                                currentUser?.roleName === "Admin" ||
-                                currentUser?.roleName === "Moderator" ||
-                                currentUser?.idUser === post.idUser
-                            ){
-                                <button class="bg-brand py-2 px-1 rounded-xl" (click)="deletePost(post.idPost)">
-                                    Eliminar post
-                                </button>
-                            }
-                        </div>
-
-                    </article>
-                }@empty {
-                    <div class="">
-
-                        <p>Aun no hay publicaciones en el muro</p>
-
-                    </div>
-                }
+        <!-- Actividad Reciente -->
+        <div class="cds-dashboard-section">
+            <div class="cds-dashboard-section__header">
+                <span class="material-symbols-outlined" style="font-size:1.125rem;">history</span>
+                Actividad Reciente
             </div>
-        </section>
+            <div class="cds-dashboard-section__body">
+                <div *ngIf="recentBookings.length === 0" class="cds-empty-state" style="border:none;">
+                    <div class="cds-empty-state__icon">
+                        <span class="material-symbols-outlined">event_busy</span>
+                    </div>
+                    <p class="cds-empty-state__title">Sin reservas</p>
+                    <p class="cds-empty-state__description">No hay reservas registradas aún.</p>
+                </div>
 
-    </main>
+                <table *ngIf="recentBookings.length > 0" class="cds-data-table">
+                    <thead>
+                        <tr>
+                            <th>Huésped</th>
+                            <th>Hab.</th>
+                            <th>Check-In</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let booking of recentBookings">
+                            <td>
+                                <div style="font-weight:500;">{{ booking.firstName }} {{ booking.lastName }}</div>
+                                <div class="cds-table-cell-muted">{{ booking.email }}</div>
+                            </td>
+                            <td>#{{ booking.idRoom }}</td>
+                            <td>{{ booking.checkIn | date:'dd/MM/yy' }}</td>
+                            <td>
+                                <span class="cds-tag" [ngClass]="getStatusClass(booking.status)">
+                                    {{ getStatusLabel(booking.status) }}
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Estado de Habitaciones -->
+        <div class="cds-dashboard-section">
+            <div class="cds-dashboard-section__header">
+                <span class="material-symbols-outlined" style="font-size:1.125rem;">apartment</span>
+                Estado de Habitaciones
+            </div>
+            <div class="cds-dashboard-section__body">
+
+                <div class="cds-status-row">
+                    <div class="cds-status-row__label">
+                        <span class="cds-status-row__dot" style="background-color: var(--cds-support-success);"></span>
+                        Activas
+                    </div>
+                    <span class="cds-status-row__value" style="color: var(--cds-support-success);">{{ activeRooms }}</span>
+                </div>
+
+                <div class="cds-status-row">
+                    <div class="cds-status-row__label">
+                        <span class="cds-status-row__dot" style="background-color: var(--cds-support-warning);"></span>
+                        En Mantenimiento
+                    </div>
+                    <span class="cds-status-row__value" style="color: var(--cds-support-warning);">{{ maintenanceRooms }}</span>
+                </div>
+
+                <div class="cds-status-row">
+                    <div class="cds-status-row__label">
+                        <span class="cds-status-row__dot" style="background-color: var(--cds-support-error);"></span>
+                        Inactivas
+                    </div>
+                    <span class="cds-status-row__value" style="color: var(--cds-support-error);">{{ inactiveRooms }}</span>
+                </div>
+
+                <div class="cds-status-row" style="background-color: var(--cds-layer-02);">
+                    <div class="cds-status-row__label">
+                        <span class="cds-status-row__dot" style="background-color: var(--cds-text-secondary);"></span>
+                        <strong>Total</strong>
+                    </div>
+                    <span class="cds-status-row__value">{{ totalRooms }}</span>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
 </div>

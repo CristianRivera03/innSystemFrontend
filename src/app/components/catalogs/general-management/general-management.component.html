@@ -1,25 +1,28 @@
-<div class="p-6 md:p-8 animate-fade-in h-[calc(100vh-64px)] flex flex-col">
-  <div class="mb-6 flex-shrink-0">
-    <h1 class="text-2xl font-bold text-text-main">Gestión General</h1>
-    <p class="text-text-muted text-sm mt-1">Administra los tipos de habitación, servicios y temporadas de manera centralizada.</p>
-  </div>
+<div class="cds-content cds-animate-fade-in" style="height:calc(100vh - 64px); display:flex; flex-direction:column;">
 
-  <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 flex-1 overflow-hidden">
-    
-    <!-- Columna 1: Tipos de Habitación -->
-    <div class="bg-card border border-border-main rounded-2xl p-5 shadow-sm overflow-hidden flex flex-col">
-      <app-room-type-management class="h-full overflow-y-auto custom-scrollbar"></app-room-type-management>
+    <div class="cds-page-header" style="flex-shrink:0;">
+        <div>
+            <h1 class="cds-page-header__title">Gestión General</h1>
+            <p class="cds-page-header__subtitle">Administra los tipos de habitación, servicios y temporadas de manera centralizada.</p>
+        </div>
     </div>
 
-    <!-- Columna 2: Servicios Adicionales -->
-    <div class="bg-card border border-border-main rounded-2xl p-5 shadow-sm overflow-hidden flex flex-col">
-      <app-service-management class="h-full overflow-y-auto custom-scrollbar"></app-service-management>
-    </div>
+    <div class="cds-catalog-grid" style="flex:1; overflow:hidden;">
 
-    <!-- Columna 3: Temporadas y Ofertas -->
-    <div class="bg-card border border-border-main rounded-2xl p-5 shadow-sm overflow-hidden flex flex-col">
-      <app-season-management class="h-full overflow-y-auto custom-scrollbar"></app-season-management>
-    </div>
+        <!-- Columna 1: Tipos de Habitación -->
+        <div class="cds-catalog-column">
+            <app-room-type-management style="display:flex; flex-direction:column; height:100; overflow-y:auto;" class="custom-scrollbar"></app-room-type-management>
+        </div>
 
-  </div>
+        <!-- Columna 2: Servicios Adicionales -->
+        <div class="cds-catalog-column">
+            <app-service-management style="display:flex; flex-direction:column; height:100; overflow-y:auto;" class="custom-scrollbar"></app-service-management>
+        </div>
+
+        <!-- Columna 3: Temporadas -->
+        <div class="cds-catalog-column">
+            <app-season-management style="display:flex; flex-direction:column; height:100; overflow-y:auto;" class="custom-scrollbar"></app-season-management>
+        </div>
+
+    </div>
 </div>

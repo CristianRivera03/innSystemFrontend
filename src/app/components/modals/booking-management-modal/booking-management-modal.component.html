@@ -1,125 +1,157 @@
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-
 @if (isOpen) {
-  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
-    <div class="bg-card w-full max-w-lg rounded-2xl shadow-2xl border border-border-main relative p-8 animate-slide-up max-h-[90vh] overflow-y-auto">
-      
-      <button 
-          (click)="closeModal()" 
-          class="absolute top-4 right-4 text-text-muted hover:text-red-500 transition-colors">
-          <span class="material-symbols-outlined">close</span>
-      </button>
-  
-      <div class="mb-6">
-          <h2 class="text-2xl font-bold text-center text-brand mb-4">
-              {{ bookingToEdit ? 'Editar Estado de Reserva' : 'Nueva Reserva' }}
-          </h2>
-          
-          <form class="flex flex-col gap-1" [formGroup]="bookingForm" (ngSubmit)="onSubmit()">
-              <div class="flex flex-col">
-  
-                  <!-- Cliente (User) -->
-                  <div class="flex flex-col justify-start">
-                      <div class="flex justify-between items-center mb-1">
-                          <label class="text-sm font-semibold text-text-main">Selecciona un cliente</label>
-                          <button class="text-xs font-semibold text-brand hover:text-brand/80 flex items-center gap-1 transition-colors"
-                                  (click)="openRegisterModal($event)">
-                              <span class="material-symbols-outlined text-[16px]">person_add</span> Nuevo Cliente
-                          </button>
-                      </div>
-                      <select class="p-2.5 rounded-xl border border-border-main bg-input text-text-main w-full focus:outline-none focus:ring-2 focus:ring-brand appearance-none disabled:opacity-50" 
-                      formControlName="idUser">
-                          <option value="" disabled selected>-- Elige un cliente --</option>
-                          @for (user of users; track user.idUser) {
-                            <option [value]="user.idUser">{{ user.firstName }} {{ user.lastName }} ({{ user.email }})</option>
-                          }
-                      </select>
-                      
-                      @if(bookingForm.get('idUser')?.invalid && bookingForm.get('idUser')?.touched){
-                          <small class="text-red-500 mt-1 block animate-fade-in">Selecciona el cliente</small>
-                      }
-                  </div>
-  
-                  <!-- Habitación (Room) -->
-                  <div class="flex flex-col justify-start mt-4">
-                      <label class="text-sm font-semibold mb-1 text-text-main">Selecciona una habitación</label>
-                      <select class="p-2.5 rounded-xl border border-border-main bg-input text-text-main w-full focus:outline-none focus:ring-2 focus:ring-brand appearance-none disabled:opacity-50" 
-                      formControlName="idRoom">
-                          <option value="" disabled selected>-- Elige una habitación --</option>
-                          @for (room of rooms; track room.idRoom) {
-                            <option [value]="room.idRoom">Habitación {{ room.roomNumber }}</option>
-                          }
-                      </select>
-                      
-                      @if(bookingForm.get('idRoom')?.invalid && bookingForm.get('idRoom')?.touched){
-                          <small class="text-red-500 mt-1 block animate-fade-in">Selecciona una habitación</small>
-                      }
-                  </div>
+    <div class="cds-modal-overlay">
+        <div class="cds-modal" style="max-width:36rem;">
 
-                  <!-- Fecha Check-In -->
-                  <div class="h-20 flex flex-col justify-start">
-                      <label class="text-sm font-semibold mb-1 text-text-main">Fecha Check-In</label>
-                      <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full focus:outline-none focus:ring-2 focus:ring-brand disabled:opacity-50" 
-                      type="date" formControlName="checkIn">
-                      
-                      @if(bookingForm.get('checkIn')?.invalid && bookingForm.get('checkIn')?.touched){
-                          <small class="text-red-500 mt-1 block animate-fade-in">Fecha requerida</small>
-                      }
-                  </div>
+            <div class="cds-modal__header">
+                <h2 class="cds-modal__title">{{ bookingToEdit ? 'Editar Estado de Reserva' : 'Nueva Reserva' }}</h2>
+                <button class="cds-modal__close" (click)="closeModal()">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
 
-                  <!-- Fecha Check-Out -->
-                  <div class="h-20 flex flex-col justify-start">
-                      <label class="text-sm font-semibold mb-1 text-text-main">Fecha Check-Out</label>
-                      <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full focus:outline-none focus:ring-2 focus:ring-brand disabled:opacity-50" 
-                      type="date" formControlName="checkOut">
-                      
-                      @if(bookingForm.get('checkOut')?.invalid && bookingForm.get('checkOut')?.touched){
-                          <small class="text-red-500 mt-1 block animate-fade-in">Fecha requerida</small>
-                      }
-                  </div>
+            <div class="cds-modal__body">
+                <form [formGroup]="bookingForm" (ngSubmit)="onSubmit(false)">
 
-                  <!-- Huéspedes -->
-                  <div class="h-20 flex flex-col justify-start">
-                      <label class="text-sm font-semibold mb-1 text-text-main">Número de Huéspedes</label>
-                      <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full focus:outline-none focus:ring-2 focus:ring-brand disabled:opacity-50" 
-                      type="number" formControlName="guestsCount" min="1">
-                      
-                      @if(bookingForm.get('guestsCount')?.invalid && bookingForm.get('guestsCount')?.touched){
-                          <small class="text-red-500 mt-1 block animate-fade-in">Debe ser al menos 1</small>
-                      }
-                  </div>
+                    <!-- Cliente (User) Autocomplete -->
+                    <div class="cds-form-item" style="position:relative;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <label class="cds-label">Buscar Titular</label>
+                            <button type="button" class="cds-link" style="font-size:0.75rem; display:flex; align-items:center; gap:0.25rem;" (click)="openRegisterModal($event)">
+                                <span class="material-symbols-outlined" style="font-size:0.875rem;">person_add</span> Nuevo
+                            </button>
+                        </div>
 
-                  <!-- Estado (Status) - Visible en Edición o por Defecto Deshabilitado -->
-                  <div class="h-20 flex flex-col justify-start">
-                      <label class="text-sm font-semibold mb-1 text-text-main">Estado Reserva</label>
-                      <select class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full focus:outline-none focus:ring-2 focus:ring-brand appearance-none disabled:opacity-50" 
-                      formControlName="idStatus">
-                          @for (status of bookingStatuses; track status.id) {
-                            <option [value]="status.id">{{ status.name }}</option>
-                          }
-                      </select>
-                  </div>
-                  
-              </div>  
-  
-              <button class="bg-brand py-2 rounded-xl text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50 mt-2 flex justify-center items-center gap-2" 
-                      type="submit" [disabled]="bookingForm.invalid || isLoading || isSaving">
-                      @if (isLoading || isSaving) {
-                        <span class="material-symbols-outlined animate-spin">progress_activity</span>
-                        {{ bookingToEdit ? 'Actualizando...' : 'Guardando...' }}
-                      } @else {
-                        {{ bookingToEdit ? 'Actualizar Estado' : 'Guardar Reserva' }}
-                      }
-              </button>
-          </form>  
-      </div>
+                        @if(selectedUserText) {
+                            <div class="cds-selected-chip">
+                                <span style="font-weight:500;">{{ selectedUserText }}</span>
+                                @if(!bookingToEdit) {
+                                    <button type="button" (click)="clearUserSelection()" style="background:none; border:none; color:var(--cds-support-error); cursor:pointer; display:flex;">
+                                        <span class="material-symbols-outlined" style="font-size:1rem;">close</span>
+                                    </button>
+                                }
+                            </div>
+                        } @else {
+                            <input class="cds-text-input" type="text"
+                                placeholder="Escribe nombre o documento..."
+                                (input)="filterUsers($event)"
+                                (focus)="isUserDropdownOpen = true"
+                                autocomplete="off">
+
+                            @if(isUserDropdownOpen && filteredUsers.length > 0) {
+                                <div class="cds-dropdown-list" style="top:100%;">
+                                    @for(user of filteredUsers; track user.idUser) {
+                                        <div class="cds-dropdown-item" (click)="selectUser(user)">
+                                            <div style="font-weight:500;">{{ user.firstName }} {{ user.lastName }}</div>
+                                            <div style="font-size:0.75rem; color:var(--cds-text-secondary);">{{ user.email }}</div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        }
+                        @if(bookingForm.get('idUser')?.invalid && bookingForm.get('idUser')?.touched){
+                            <small class="cds-form-error">Selecciona el cliente</small>
+                        }
+                    </div>
+
+                    <!-- Check-In / Check-Out -->
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                        <div class="cds-form-item">
+                            <label class="cds-label">Check-In</label>
+                            <input class="cds-text-input" type="date" formControlName="checkIn" [min]="minCheckInDate">
+                            @if(bookingForm.get('checkIn')?.invalid && bookingForm.get('checkIn')?.touched){
+                                <small class="cds-form-error">Requerida</small>
+                            }
+                        </div>
+                        <div class="cds-form-item">
+                            <label class="cds-label">Check-Out</label>
+                            <input class="cds-text-input" type="date" formControlName="checkOut" [min]="minCheckOutDate">
+                            @if(bookingForm.get('checkOut')?.invalid && bookingForm.get('checkOut')?.touched){
+                                <small class="cds-form-error">Requerida</small>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Guests + Search -->
+                    <div style="display:flex; gap:1rem; align-items:flex-end;">
+                        <div class="cds-form-item" style="flex:1;">
+                            <label class="cds-label">Huéspedes</label>
+                            <input class="cds-text-input" type="number" formControlName="guestsCount" min="1">
+                            @if(bookingForm.get('guestsCount')?.invalid && bookingForm.get('guestsCount')?.touched){
+                                <small class="cds-form-error">Mín. 1</small>
+                            }
+                        </div>
+                        @if(!bookingToEdit) {
+                            <button type="button" (click)="searchAvailableRooms()" class="cds-btn-secondary cds-btn--sm" style="margin-bottom:1rem;">
+                                <span class="material-symbols-outlined" style="font-size:1rem;">search</span> Buscar Libres
+                            </button>
+                        }
+                    </div>
+
+                    <!-- Room Select -->
+                    <div class="cds-form-item">
+                        <label class="cds-label">Habitaciones Disponibles</label>
+                        <select class="cds-select" formControlName="idRoom">
+                            @if(rooms.length === 0 && !bookingToEdit) {
+                                <option value="" disabled selected>-- Busca disponibilidad primero --</option>
+                            } @else {
+                                <option value="" disabled selected>-- Elige una habitación --</option>
+                                @for (room of rooms; track room.idRoom) {
+                                    <option [value]="room.idRoom">Habitación {{ room.roomNumber }} - ${{ room.basePrice }} /noche</option>
+                                }
+                            }
+                        </select>
+                        @if(bookingForm.get('idRoom')?.invalid && bookingForm.get('idRoom')?.touched){
+                            <small class="cds-form-error">Selecciona una habitación</small>
+                        }
+                    </div>
+
+                    <!-- Cost Estimate -->
+                    @if(totalCost > 0) {
+                        <div class="cds-cost-estimate">
+                            <span class="cds-cost-estimate__label">Costo Total Estimado:</span>
+                            <span class="cds-cost-estimate__value">${{ totalCost.toFixed(2) }}</span>
+                        </div>
+                    }
+
+                    <!-- Status -->
+                    <div class="cds-form-item" style="margin-top:1rem;">
+                        <label class="cds-label">Estado Reserva</label>
+                        <select class="cds-select" formControlName="idStatus">
+                            @for (status of bookingStatuses; track status.id) {
+                                <option [value]="status.id">{{ status.name }}</option>
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div style="display:flex; gap:0.5rem; margin-top:1.5rem;">
+                        <button class="cds-btn-secondary" type="submit" [disabled]="bookingForm.invalid || isLoading || isSaving" style="flex:1;">
+                            @if (isLoading || isSaving) {
+                                <span class="material-symbols-outlined" style="animation:cds-spin 0.7s linear infinite; font-size:1.125rem;">progress_activity</span>
+                            }
+                            {{ bookingToEdit ? 'Actualizar Estado' : 'Cerrar (Queda Pendiente)' }}
+                        </button>
+
+                        @if(!bookingToEdit) {
+                            <button class="cds-btn-primary" type="button" (click)="onSubmit(true)" [disabled]="bookingForm.invalid || isLoading || isSaving" style="flex:1;">
+                                @if (isLoading || isSaving) {
+                                    <span class="material-symbols-outlined" style="animation:cds-spin 0.7s linear infinite; font-size:1.125rem;">progress_activity</span>
+                                }
+                                Continuar Pago
+                                <span class="material-symbols-outlined" style="font-size:1rem;">credit_card</span>
+                            </button>
+                        }
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <app-registrer-modal
-      [isOpen]="isRegisterModalOpen"
-      [roles]="roles"
-      (onClose)="closeRegisterModal()"
-      (onUserCreated)="onUserRegistered()">
-  </app-registrer-modal>
+    <app-registrer-modal
+        [isOpen]="isRegisterModalOpen"
+        [roles]="roles"
+        [isClientOnly]="true"
+        (onClose)="closeRegisterModal()"
+        (onUserCreated)="onUserRegistered()">
+    </app-registrer-modal>
 }

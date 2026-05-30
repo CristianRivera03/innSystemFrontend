@@ -11,6 +11,7 @@ import { SessionDTO } from '../../models/session';
 export class LayoutComponent implements OnInit {
   //inyecciones
   isDarkMode: boolean = false;
+  isSidebarOpen: boolean = false;
   private router = inject(Router);
   currentUser: SessionDTO | null = null;
 

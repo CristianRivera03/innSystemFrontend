@@ -23,7 +23,10 @@ export class RoomService {
     return this.http.get<ResponseAPI<RoomDTO[]>>(`${this.apiURL}`)
   }
 
-
+  // Obtener habitaciones disponibles
+  getAvailableRooms(checkIn: string, checkOut: string, guestsCount: number): Observable<ResponseAPI<RoomDTO[]>> {
+    return this.http.get<ResponseAPI<RoomDTO[]>>(`${this.apiURL}/available?checkIn=${checkIn}&checkOut=${checkOut}&guestsCount=${guestsCount}`);
+  }
   //crear habitacion
   createRoom(payload : CreateRoomDTO) : Observable<ResponseAPI<RoomDTO>>{
     const formData = new FormData();

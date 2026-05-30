@@ -1,60 +1,62 @@
-<div class="h-full flex flex-col animate-fade-in">
-  <div class="flex justify-between items-center mb-4">
-    <div>
-      <h2 class="text-xl font-bold text-text-main flex items-center gap-2">
-        <span class="material-symbols-outlined text-brand">calendar_month</span>
-        Temporadas
-      </h2>
-      <p class="text-text-muted text-xs mt-1">Fechas y multiplicadores de precio.</p>
-    </div>
-    <button (click)="openCreateModal()" class="bg-brand/10 text-brand p-2 rounded-lg hover:bg-brand hover:text-white transition-colors" title="Nueva Temporada">
-      <span class="material-symbols-outlined text-[20px]">add</span>
-    </button>
-  </div>
+<div style="display:flex; flex-direction:column; height:100%;">
 
-  <div *ngIf="isLoading" class="flex justify-center items-center py-10 flex-1">
-    <span class="material-symbols-outlined animate-spin text-brand text-3xl">progress_activity</span>
-  </div>
-
-  <div *ngIf="!isLoading && seasons.length === 0" class="flex-1 border-2 border-dashed border-border-main rounded-xl flex flex-col items-center justify-center p-6 text-center">
-    <span class="material-symbols-outlined text-3xl text-text-muted mb-2">event_busy</span>
-    <p class="text-sm text-text-muted">No hay temporadas registradas.</p>
-  </div>
-
-  <div *ngIf="!isLoading && seasons.length > 0" class="flex-1 overflow-y-auto custom-scrollbar pr-2 space-y-3">
-    <div *ngFor="let season of seasons" class="bg-card border border-border-main rounded-xl p-4 shadow-sm hover:border-brand/50 transition-colors group">
-      
-      <div class="flex justify-between items-start mb-2">
-        <h3 class="font-semibold text-text-main text-sm line-clamp-1">{{ season.seasonName }}</h3>
-        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button (click)="openUpdateModal(season)" class="text-text-muted hover:text-brand transition-colors p-1" title="Editar">
-            <span class="material-symbols-outlined text-[16px]">edit</span>
-          </button>
-          <button (click)="inactivateSeason(season)" class="text-text-muted hover:text-red-500 transition-colors p-1" title="Eliminar">
-            <span class="material-symbols-outlined text-[16px]">delete</span>
-          </button>
+    <div class="cds-catalog-column__header">
+        <div class="cds-catalog-column__title">
+            <span class="material-symbols-outlined">calendar_month</span>
+            <div>
+                <h3>Temporadas</h3>
+                <p>Fechas y multiplicadores de precio.</p>
+            </div>
         </div>
-      </div>
-      
-      <div class="flex items-center gap-2 text-xs text-text-muted mb-2">
-        <span class="material-symbols-outlined text-[14px]">date_range</span>
-        {{ season.startDate | date:'dd/MM/yyyy' }} - {{ season.endDate | date:'dd/MM/yyyy' }}
-      </div>
-
-      <div class="flex items-center gap-1 mt-2">
-        <span class="text-xs font-medium px-2 py-1 bg-brand/10 text-brand rounded-md border border-brand/20">
-          x{{ season.priceMultiplier }}
-        </span>
-        <span class="text-xs text-text-muted ml-1">Multiplicador</span>
-      </div>
-
+        <button (click)="openCreateModal()" class="cds-btn-icon" style="color:var(--cds-interactive);" title="Nueva Temporada">
+            <span class="material-symbols-outlined">add</span>
+        </button>
     </div>
-  </div>
+
+    <div class="cds-catalog-column__body custom-scrollbar">
+
+        <div *ngIf="isLoading" class="cds-spinner" style="padding:2rem;">
+            <span class="material-symbols-outlined">progress_activity</span>
+        </div>
+
+        <div *ngIf="!isLoading && seasons.length === 0" style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:2rem; border:1px dashed var(--cds-border-strong); text-align:center;">
+            <span class="material-symbols-outlined" style="font-size:1.5rem; color:var(--cds-text-secondary); margin-bottom:0.5rem;">event_busy</span>
+            <p style="font-size:0.75rem; color:var(--cds-text-secondary);">No hay temporadas registradas.</p>
+        </div>
+
+        <div *ngIf="!isLoading && seasons.length > 0">
+            <div *ngFor="let season of seasons" class="cds-catalog-item" style="flex-direction:column; align-items:stretch;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <h4 style="font-size:0.875rem; font-weight:500; color:var(--cds-text-primary);">{{ season.seasonName }}</h4>
+                    <div class="cds-catalog-item__actions">
+                        <button (click)="openUpdateModal(season)" class="cds-btn-icon" title="Editar">
+                            <span class="material-symbols-outlined" style="font-size:1rem;">edit</span>
+                        </button>
+                        <button (click)="inactivateSeason(season)" class="cds-btn-icon" style="color:var(--cds-support-error);" title="Eliminar">
+                            <span class="material-symbols-outlined" style="font-size:1rem;">delete</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div style="display:flex; align-items:center; gap:0.25rem; font-size:0.75rem; color:var(--cds-text-secondary); margin-top:0.25rem;">
+                    <span class="material-symbols-outlined" style="font-size:0.875rem;">date_range</span>
+                    {{ season.startDate | date:'dd/MM/yyyy' }} - {{ season.endDate | date:'dd/MM/yyyy' }}
+                </div>
+
+                <div style="margin-top:0.5rem;">
+                    <span class="cds-tag cds-tag--blue">
+                        x{{ season.priceMultiplier }}
+                    </span>
+                    <span style="font-size:0.75rem; color:var(--cds-text-secondary); margin-left:0.25rem;">Multiplicador</span>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <app-season-modal
-  [isOpen]="isModalOpen"
-  [seasonToEdit]="selectedSeason"
-  (onClose)="closeModal()"
-  (onSuccess)="loadSeasons()">
+    [isOpen]="isModalOpen"
+    [seasonToEdit]="selectedSeason"
+    (onClose)="closeModal()"
+    (onSuccess)="loadSeasons()">
 </app-season-modal>
