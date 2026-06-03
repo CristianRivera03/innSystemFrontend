@@ -32,12 +32,55 @@ export class UserManagementComponent {
   users: UserDTO[] = [];
   roles: RoleDTO[] = [];
 
+  // Paginación y Filtros
+  searchTerm: string = '';
+  selectedRoleName: string = '';
+  currentPage: number = 1;
+  itemsPerPage: number = 8;
+  totalPages: number = 1;
+
+  filteredUsersList: UserDTO[] = [];
+  paginatedUsersList: UserDTO[] = [];
 
   ngOnInit() {
     this.loadUserSession();
     if (this.currentUser) {
-      this.loadUsers(); // solo mostrara los posts si hay alguien logeado
+      this.loadUsers(); 
       this.loadRoles();
+    }
+  }
+
+  //cargar usuarios paginados desde el backend
+  loadUsers() {
+    this.userService.getPaginatedUsers(this.searchTerm, this.selectedRoleName, this.currentPage, this.itemsPerPage).subscribe({
+      next: (res: any) => {
+        if (res.status && res.value) {
+          this.paginatedUsersList = res.value.items;
+          this.totalPages = res.value.totalPages;
+        }
+      },
+      error: (err) => {
+        console.error("Error al cargar la lista de usuarios", err);
+      }
+    });
+  }
+
+  onFilterChange() {
+    this.currentPage = 1;
+    this.loadUsers();
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.loadUsers();
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.loadUsers();
     }
   }
 
@@ -49,22 +92,6 @@ export class UserManagementComponent {
     } else {
       this.router.navigate(["/login"]);
     }
-  }
-
-  //cargar usuarios
-  loadUsers() {
-    this.userService.getAllUsers().subscribe({
-      next: (res: any) => {
-        this.users = res.value || res;
-
-        console.log("Log de users", this.users);
-
-      },
-      error: (err) => {
-        console.error("Error al cargar la lista de usuarios", err);
-
-      }
-    })
   }
 
   loadRoles(){
@@ -132,8 +159,4 @@ export class UserManagementComponent {
     this.isRegisterModalOpen = false;
     this.userToEdit = null;
   }
-
-
-
-
 }

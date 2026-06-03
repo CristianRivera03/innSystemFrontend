@@ -1,0 +1,122 @@
+<div class="cds-content cds-animate-fade-in">
+    <!-- Header -->
+    <div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end;">
+        <div>
+            <h1 style="font-size: 1.75rem; font-weight: 300; margin-bottom: 0.5rem;">Reportes Financieros</h1>
+            <p class="cds-table-cell-muted">Analiza los ingresos y exporta la información contable.</p>
+        </div>
+        
+        <div style="display: flex; gap: 0.5rem;">
+            <button class="cds-btn-secondary" (click)="exportToExcel()">
+                <span class="material-symbols-outlined" style="margin-right: 0.5rem;">table</span>
+                Exportar Excel
+            </button>
+            <button class="cds-btn-primary" (click)="exportToPDF()">
+                <span class="material-symbols-outlined" style="margin-right: 0.5rem;">picture_as_pdf</span>
+                Exportar PDF
+            </button>
+        </div>
+    </div>
+
+    <!-- Filters Section -->
+    <div class="cds-dashboard-section" style="margin-bottom: 2rem;">
+        <div class="cds-dashboard-section__body" style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+            
+            <div class="cds-form-group" style="flex: 1; min-width: 200px; margin-bottom: 0;">
+                <label class="cds-label">Fecha Inicio (Check-in)</label>
+                <input type="date" class="cds-text-input" [(ngModel)]="startDate" (change)="applyFilters()">
+            </div>
+
+            <div class="cds-form-group" style="flex: 1; min-width: 200px; margin-bottom: 0;">
+                <label class="cds-label">Fecha Fin (Check-in)</label>
+                <input type="date" class="cds-text-input" [(ngModel)]="endDate" (change)="applyFilters()">
+            </div>
+
+            <div class="cds-form-group" style="flex: 1; min-width: 200px; margin-bottom: 0;">
+                <label class="cds-label">Estado de Reserva</label>
+                <select class="cds-select" [(ngModel)]="statusFilter" (change)="applyFilters()">
+                    <option value="All">Todos los estados</option>
+                    <option value="Completed">Completada</option>
+                    <option value="Confirmed">Confirmada</option>
+                    <option value="Pending">Pendiente</option>
+                    <option value="Cancelled">Cancelada</option>
+                </select>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="cds-kpi-grid" style="margin-bottom: 2rem; grid-template-columns: repeat(3, 1fr);">
+        <div class="cds-kpi-card" style="border-top: 3px solid var(--cds-support-success);">
+            <span class="cds-kpi-card__label">Ingresos Efectivos (Cobradas)</span>
+            <span class="cds-kpi-card__value" style="color: var(--cds-support-success);">${{ totalRevenue | number:'1.2-2' }}</span>
+        </div>
+        <div class="cds-kpi-card" style="border-top: 3px solid var(--cds-support-warning);">
+            <span class="cds-kpi-card__label">Cuentas por Cobrar (Pendientes)</span>
+            <span class="cds-kpi-card__value" style="color: var(--cds-support-warning);">${{ pendingRevenue | number:'1.2-2' }}</span>
+        </div>
+        <div class="cds-kpi-card" style="border-top: 3px solid var(--cds-interactive-01);">
+            <span class="cds-kpi-card__label">Volumen de Reservas</span>
+            <span class="cds-kpi-card__value">{{ totalBookings }}</span>
+        </div>
+    </div>
+
+    <!-- Data Table -->
+    <div class="cds-dashboard-section">
+        <div class="cds-dashboard-section__header">
+            <span class="material-symbols-outlined" style="font-size:1.125rem;">list_alt</span>
+            Detalle de Reservas ({{ filteredBookings.length }})
+        </div>
+        <div class="cds-dashboard-section__body" style="padding: 0;">
+            
+            <div *ngIf="filteredBookings.length === 0" class="cds-empty-state">
+                <div class="cds-empty-state__icon">
+                    <span class="material-symbols-outlined">search_off</span>
+                </div>
+                <p class="cds-empty-state__title">No hay resultados</p>
+                <p class="cds-empty-state__description">Intenta ajustar los filtros de fecha o estado.</p>
+            </div>
+
+            <table *ngIf="filteredBookings.length > 0" class="cds-data-table" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th>ID Reserva</th>
+                        <th>Huésped</th>
+                        <th>Habitaciones</th>
+                        <th>Check-in</th>
+                        <th>Check-out</th>
+                        <th>Estado</th>
+                        <th style="text-align: right;">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let b of filteredBookings">
+                        <td><span class="cds-table-cell-muted">#{{ b.idBooking }}</span></td>
+                        <td>
+                            <div style="font-weight: 500;">{{ b.firstName }} {{ b.lastName }}</div>
+                            <div class="cds-table-cell-muted" style="font-size: 0.75rem;">{{ b.email }}</div>
+                        </td>
+                        <td>{{ b.idRoom }}</td>
+                        <td>{{ b.checkIn | date:'dd/MM/yyyy' }}</td>
+                        <td>{{ b.checkOut | date:'dd/MM/yyyy' }}</td>
+                        <td>
+                            <span class="cds-tag" [ngClass]="{
+                                'cds-tag--green': b.status === 'Completed',
+                                'cds-tag--blue': b.status === 'Confirmed',
+                                'cds-tag--yellow': b.status === 'Pending',
+                                'cds-tag--red': b.status === 'Cancelled' || b.status === 'No_Show'
+                            }">
+                                {{ getStatusLabel(b.status) }}
+                            </span>
+                        </td>
+                        <td style="text-align: right; font-weight: 500;">
+                            ${{ b.totalCost | number:'1.2-2' }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>

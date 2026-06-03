@@ -31,6 +31,7 @@ export interface UserUpdateDTO {
     idRole: number;
     firstName: string;
     lastName: string;
+    email: string;
     phone?: string;
     documentId?: string;
     isActive: boolean;

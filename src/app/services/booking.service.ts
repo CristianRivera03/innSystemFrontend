@@ -35,4 +35,21 @@ export class BookingService {
     return this.http.patch<ResponseAPI<boolean>>(`${this.apiURL}/${id}/status`, statusId);
   }
 
+  generateWompiPaymentLink(bookingId: string): Observable<{ urlEnlace: string }> {
+    return this.http.post<{ urlEnlace: string }>(
+      `${environment.endpoint}Payment/wompi-link/${bookingId}`,
+      {}
+    );
+  }
+
+  confirmFromRedirect(bookingId: string, idTransaccion: string | null): Observable<{ status: boolean; msg: string; currentStatus: number }> {
+    const params: Record<string, string> = { bookingId };
+    if (idTransaccion) params['idTransaccion'] = idTransaccion;
+    return this.http.post<{ status: boolean; msg: string; currentStatus: number }>(
+      `${environment.endpoint}Payment/confirm-from-redirect`,
+      {},
+      { params }
+    );
+  }
+
 }

@@ -4,6 +4,7 @@ import { routes } from './app.routes';
 import { provideHttpClient } from '@angular/common/http';
 import localeEs from "@angular/common/locales/es"
 import { registerLocaleData } from '@angular/common';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 
 
@@ -11,7 +12,11 @@ import { registerLocaleData } from '@angular/common';
 registerLocaleData(localeEs);
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideZoneChangeDetection({ eventCoalescing: true }), provideRouter(routes), provideHttpClient(),
-    {provide : LOCALE_ID, useValue : 'es-SV'}
+  providers: [
+    provideZoneChangeDetection({ eventCoalescing: true }), 
+    provideRouter(routes), 
+    provideHttpClient(),
+    {provide : LOCALE_ID, useValue : 'es-SV'},
+    provideCharts(withDefaultRegisterables())
   ]
 };

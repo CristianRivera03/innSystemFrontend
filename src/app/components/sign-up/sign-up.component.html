@@ -42,8 +42,11 @@
                     
                     <div class="relative">
                         <input class="p-2 rounded-xl border border-border-main bg-input text-text-main w-full placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-brand pr-10" 
-                        type="password" formControlName="password" placeholder="Ingresa tu contraseña">
-                        <span class="material-symbols-outlined absolute top-1/2 right-3 -translate-y-1/2 text-text-muted cursor-pointer hover:text-brand transition-colors">visibility</span>
+                        [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="Ingresa tu contraseña">
+                        <span class="material-symbols-outlined absolute top-1/2 right-3 -translate-y-1/2 text-text-muted cursor-pointer hover:text-brand transition-colors"
+                              (click)="showPassword = !showPassword">
+                            {{ showPassword ? 'visibility_off' : 'visibility' }}
+                        </span>
                     </div>
                 </div>
         

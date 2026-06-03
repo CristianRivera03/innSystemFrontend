@@ -1,0 +1,63 @@
+<div class="cds-public-search">
+    <div class="cds-public-search__header">
+        <div class="cds-public-search__header-content">
+            <h1>Habitaciones Disponibles</h1>
+            <p>Mostrando resultados del <strong>{{ checkIn | date:'mediumDate' }}</strong> al <strong>{{ checkOut | date:'mediumDate' }}</strong> ({{ diffDays }} noches, {{ guests }} huéspedes)</p>
+            <a routerLink="/home" class="cds-btn-secondary cds-btn--sm" style="margin-top: 1rem;">Modificar Búsqueda</a>
+        </div>
+    </div>
+
+    <div class="cds-public-search__container">
+        @if (isLoading) {
+            <div style="text-align: center; padding: 4rem;">
+                <p>Buscando las mejores opciones para ti...</p>
+            </div>
+        } @else if (rooms.length === 0) {
+            <div style="text-align: center; padding: 4rem; background: var(--cds-layer-01); border-radius: 8px;">
+                <h2>No hay habitaciones disponibles</h2>
+                <p style="color: var(--cds-text-secondary); margin-top: 0.5rem;">Lo sentimos, no hemos encontrado habitaciones que cumplan con tus criterios de búsqueda. Intenta con otras fechas.</p>
+                <a routerLink="/home" class="cds-btn-primary" style="margin-top: 1.5rem;">Volver al buscador</a>
+            </div>
+        } @else {
+            <div class="cds-room-grid">
+                @for (room of rooms; track room.idRoom) {
+                    <div class="cds-room-card">
+                        <div class="cds-room-card__image">
+                            <img [src]="room.images && room.images.length > 0 ? room.images[0].url : 'assets/placeholder-room.jpg'" alt="Habitación">
+                            <div class="cds-room-card__badge">{{ room.roomType }}</div>
+                        </div>
+                        
+                        <div class="cds-room-card__content">
+                            <h3>Habitación #{{ room.roomNumber }}</h3>
+                            
+                            <div class="cds-room-card__amenities">
+                                <span class="material-symbols-outlined" title="Capacidad">person</span> {{ room.guestCapacity }} personas
+                                @if(room.services) {
+                                    @for(service of room.services; track service.idService){
+                                        <span style="margin-left: 0.5rem; color: var(--cds-text-secondary);">&bull; {{ service.name }}</span>
+                                    }
+                                }
+                            </div>
+                            
+                            <div class="cds-room-card__desc">
+                                {{ room.description }}
+                            </div>
+                        </div>
+
+                        <div class="cds-room-card__footer">
+                            <div class="cds-room-card__price-box">
+                                @let costData = calculateDynamicCost(room.basePrice);
+                                <span class="cds-room-card__total-price">${{ costData.total.toFixed(2) }}</span>
+                                <span class="cds-room-card__price-detail">Total por {{ diffDays }} noches</span>
+                                @if (costData.appliedSeasons.length > 0) {
+                                    <span class="cds-room-card__season-alert" title="{{ costData.appliedSeasons.join(', ') }}">Tarifa de temporada aplicada</span>
+                                }
+                            </div>
+                            <button class="cds-btn-primary" (click)="bookRoom(room)">Reservar Ahora</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>

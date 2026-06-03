@@ -42,7 +42,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let booking of bookings">
+                    <tr *ngFor="let booking of paginatedBookings">
 
                         <td>
                             <div style="font-weight:500; color:var(--cds-interactive);">{{ booking.firstName }} {{ booking.lastName }}</div>
@@ -50,7 +50,7 @@
                         </td>
 
                         <td>
-                            <div style="font-weight:500;">Hab. #{{ booking.idRoom }}</div>
+                            <div style="font-weight:500;">Hab. #{{ booking.roomNumber || booking.idRoom }}</div>
                             <div class="cds-table-cell-muted" style="display:flex; align-items:center; gap:0.25rem; margin-top:0.125rem;">
                                 <span class="material-symbols-outlined" style="font-size:0.875rem;">person</span>
                                 {{ booking.guestsCount }} personas
@@ -91,18 +91,53 @@
 
                         <td style="text-align:right;">
                             <div style="display:flex; align-items:center; justify-content:flex-end; gap:0.25rem;">
-                                <!-- Confirm -->
-                                <button *ngIf="booking.status === 'Pending'" (click)="updateStatus(booking.idBooking, 2)" class="cds-btn-icon" style="color:var(--cds-support-success);" title="Confirmar Reserva">
+
+                                <!-- PENDING: Pagar con Wompi -->
+                                <button *ngIf="booking.status === 'Pending'"
+                                    (click)="payBooking(booking.idBooking)"
+                                    [disabled]="payingBookingId === booking.idBooking"
+                                    class="cds-btn-icon"
+                                    style="color:#8a3ffc;"
+                                    title="Pagar con Wompi">
+                                    <span *ngIf="payingBookingId !== booking.idBooking"
+                                        class="material-symbols-outlined" style="font-size:1.125rem;">credit_card</span>
+                                    <span *ngIf="payingBookingId === booking.idBooking"
+                                        class="material-symbols-outlined"
+                                        style="font-size:1.125rem; animation:cds-spin 0.7s linear infinite;">progress_activity</span>
+                                </button>
+
+                                <!-- PENDING: Confirmar -->
+                                <button *ngIf="booking.status === 'Pending'"
+                                    (click)="confirmBooking(booking.idBooking)"
+                                    class="cds-btn-icon"
+                                    style="color:var(--cds-support-success);"
+                                    title="Confirmar Reserva">
                                     <span class="material-symbols-outlined" style="font-size:1.125rem;">check_circle</span>
                                 </button>
-                                <!-- Cancel -->
-                                <button *ngIf="booking.status === 'Pending' || booking.status === 'Confirmed'" (click)="updateStatus(booking.idBooking, 4)" class="cds-btn-icon" style="color:var(--cds-support-error);" title="Cancelar Reserva">
+
+                                <!-- CONFIRMED: Completar -->
+                                <button *ngIf="booking.status === 'Confirmed'"
+                                    (click)="completeBooking(booking.idBooking)"
+                                    class="cds-btn-icon"
+                                    style="color:var(--cds-interactive);"
+                                    title="Marcar como Completada">
+                                    <span class="material-symbols-outlined" style="font-size:1.125rem;">task_alt</span>
+                                </button>
+
+                                <!-- PENDING o CONFIRMED: Cancelar -->
+                                <button *ngIf="booking.status === 'Pending' || booking.status === 'Confirmed'"
+                                    (click)="cancelBooking(booking.idBooking)"
+                                    class="cds-btn-icon"
+                                    style="color:var(--cds-support-error);"
+                                    title="Cancelar Reserva">
                                     <span class="material-symbols-outlined" style="font-size:1.125rem;">cancel</span>
                                 </button>
-                                <!-- Edit -->
+
+                                <!-- Editar estado (siempre visible) -->
                                 <button (click)="openUpdateModal(booking)" class="cds-btn-icon" title="Editar Estado">
                                     <span class="material-symbols-outlined" style="font-size:1.125rem;">edit</span>
                                 </button>
+
                             </div>
                         </td>
 
@@ -110,6 +145,17 @@
                 </tbody>
             </table>
         </div>
+    </div>
+
+    <!-- Pagination Controls -->
+    <div *ngIf="!isLoading && totalPages > 1" class="cds-pagination-wrap" style="display:flex; justify-content:center; align-items:center; gap:1rem; margin-top:1.5rem;">
+        <button class="cds-btn-secondary" [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)">
+            <span class="material-symbols-outlined">chevron_left</span> Anterior
+        </button>
+        <span style="font-weight:500; font-size:0.875rem;">Página {{ currentPage }} de {{ totalPages }}</span>
+        <button class="cds-btn-secondary" [disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)">
+            Siguiente <span class="material-symbols-outlined">chevron_right</span>
+        </button>
     </div>
 </div>
 

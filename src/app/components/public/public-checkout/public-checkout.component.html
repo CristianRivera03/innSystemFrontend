@@ -1,0 +1,130 @@
+<div class="cds-public-checkout">
+    <div class="cds-public-checkout__container">
+        @if (bookingData) {
+            
+            <div class="cds-checkout-summary">
+                <h2>Resumen de la Reserva</h2>
+                <div class="cds-checkout-summary__card">
+                    <h3>Habitación #{{ bookingData.room.roomNumber }} - {{ bookingData.room.roomType }}</h3>
+                    
+                    <div class="cds-checkout-summary__dates">
+                        <div>
+                            <span>Check-In</span>
+                            <strong>{{ bookingData.checkIn | date:'mediumDate' }}</strong>
+                        </div>
+                        <span class="material-symbols-outlined">arrow_forward</span>
+                        <div>
+                            <span>Check-Out</span>
+                            <strong>{{ bookingData.checkOut | date:'mediumDate' }}</strong>
+                        </div>
+                    </div>
+
+                    <ul class="cds-checkout-summary__details">
+                        <li><strong>Noches:</strong> {{ bookingData.diffDays }}</li>
+                        <li><strong>Huéspedes:</strong> {{ bookingData.guestsCount }}</li>
+                    </ul>
+
+                    <div class="cds-checkout-summary__total">
+                        <span>Total a Pagar</span>
+                        <strong>${{ bookingData.totalCost.toFixed(2) }}</strong>
+                    </div>
+                    @if (bookingData.appliedSeasons && bookingData.appliedSeasons.length > 0) {
+                        <small style="color: var(--cds-support-warning); display: block; margin-top: 0.5rem;">
+                            Incluye tarifas de temporada: {{ bookingData.appliedSeasons.join(', ') }}
+                        </small>
+                    }
+                </div>
+            </div>
+
+            <div class="cds-checkout-form">
+                @if (currentUser) {
+                    <h2>Tus Datos</h2>
+                    <div class="cds-checkout-form__user-card">
+                        <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--cds-interactive);">account_circle</span>
+                        <div>
+                            <h3>{{ currentUser.firstName }} {{ currentUser.lastName }}</h3>
+                            <p>{{ currentUser.email }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="cds-checkout-actions">
+                        <button class="cds-btn-primary" [disabled]="isProcessing" (click)="onProceed()" style="width: 100%;">
+                            {{ isProcessing ? 'Procesando...' : 'Proceder al Pago Seguro' }}
+                        </button>
+                    </div>
+
+                } @else {
+                    <h2>Datos del Huésped</h2>
+                    <p style="margin-bottom: 1.5rem; color: var(--cds-text-secondary);">Para garantizar tu reserva y enviarte el comprobante, necesitamos que te registres.</p>
+
+                    <form [formGroup]="checkoutForm" (ngSubmit)="onProceed()" style="display: flex; flex-direction: column; gap: 1rem;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="cds-form-item">
+                                <label class="cds-label" for="firstName">Nombre *</label>
+                                <input class="cds-text-input" type="text" id="firstName" formControlName="firstName">
+                                @if(checkoutForm.get('firstName')?.invalid && checkoutForm.get('firstName')?.touched){
+                                    <small class="cds-form-error">El nombre es requerido</small>
+                                }
+                            </div>
+                            <div class="cds-form-item">
+                                <label class="cds-label" for="lastName">Apellido *</label>
+                                <input class="cds-text-input" type="text" id="lastName" formControlName="lastName">
+                                @if(checkoutForm.get('lastName')?.invalid && checkoutForm.get('lastName')?.touched){
+                                    <small class="cds-form-error">El apellido es requerido</small>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="cds-form-item">
+                            <label class="cds-label" for="email">Correo Electrónico *</label>
+                            <input class="cds-text-input" type="email" id="email" formControlName="email">
+                            @if(checkoutForm.get('email')?.invalid && checkoutForm.get('email')?.touched){
+                                <small class="cds-form-error">Ingresa un correo válido</small>
+                            }
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="cds-form-item">
+                                <label class="cds-label" for="documentId">DUI / Identificación *</label>
+                                <input class="cds-text-input" type="text" id="documentId" formControlName="documentId">
+                                @if(checkoutForm.get('documentId')?.invalid && checkoutForm.get('documentId')?.touched){
+                                    <small class="cds-form-error">La identificación es obligatoria</small>
+                                }
+                            </div>
+                            <div class="cds-form-item">
+                                <label class="cds-label" for="phone">Teléfono (Opcional)</label>
+                                <input class="cds-text-input" type="text" id="phone" formControlName="phone" maxlength="8">
+                                @if(checkoutForm.get('phone')?.invalid && checkoutForm.get('phone')?.touched){
+                                    <small class="cds-form-error">Máximo 8 dígitos</small>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="cds-form-item">
+                            <label class="cds-label" for="password">Crea una Contraseña *</label>
+                            <div style="position: relative;">
+                                <input class="cds-text-input" [type]="showPassword ? 'text' : 'password'" id="password" formControlName="password" style="padding-right: 2.5rem;">
+                                <span class="material-symbols-outlined" 
+                                      style="position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--cds-text-secondary);"
+                                      (click)="showPassword = !showPassword">
+                                    {{ showPassword ? 'visibility_off' : 'visibility' }}
+                                </span>
+                            </div>
+                            @if(checkoutForm.get('password')?.invalid && checkoutForm.get('password')?.touched){
+                                <small class="cds-form-error">Mínimo 6 caracteres</small>
+                            }
+                        </div>
+
+                        <div class="cds-checkout-actions" style="margin-top: 1rem;">
+                            <button class="cds-btn-primary" type="submit" [disabled]="isProcessing" style="width: 100%;">
+                                {{ isProcessing ? 'Creando cuenta y procesando...' : 'Crear Cuenta y Pagar' }}
+                            </button>
+                        </div>
+                    </form>
+                    <p style="margin-top: 1rem; font-size: 0.875rem; text-align: center;">¿Ya tienes cuenta? <a routerLink="/login" style="color: var(--cds-interactive);">Inicia Sesión aquí</a></p>
+                }
+            </div>
+
+        }
+    </div>
+</div>

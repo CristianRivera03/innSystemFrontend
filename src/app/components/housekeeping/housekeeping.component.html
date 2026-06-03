@@ -1,0 +1,78 @@
+<div class="cds-content cds-animate-fade-in">
+    <!-- Header -->
+    <div style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end;">
+        <div>
+            <h1 style="font-size: 1.75rem; font-weight: 300; margin-bottom: 0.5rem;">Housekeeping Tasks</h1>
+            <p class="cds-table-cell-muted">Gestiona el estado de limpieza y mantenimiento de las habitaciones.</p>
+        </div>
+
+        <div>
+            <button class="cds-btn-primary" (click)="exportToPDF()">
+                <span class="material-symbols-outlined" style="margin-right: 0.5rem;">print</span>
+                Imprimir Lista de Limpieza
+            </button>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+        <button [ngClass]="filter === 'all' ? 'cds-btn-primary' : 'cds-btn-secondary'" (click)="filter = 'all'">
+            Todas
+        </button>
+        <button [ngClass]="filter === 'maintenance' ? 'cds-btn-primary' : 'cds-btn-secondary'" (click)="filter = 'maintenance'">
+            En Mantenimiento / Sucia
+        </button>
+        <button [ngClass]="filter === 'active' ? 'cds-btn-primary' : 'cds-btn-secondary'" (click)="filter = 'active'">
+            Activa / Limpia
+        </button>
+    </div>
+
+    <!-- Grid de Habitaciones -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem;">
+        
+        <div *ngFor="let room of filteredRooms" 
+             style="background: var(--cds-layer-01); border: 1px solid var(--cds-border-subtle); padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between;">
+            
+            <div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
+                    <h2 style="font-size: 1.25rem; font-weight: 600; margin: 0;">Habitación #{{ room.roomNumber }}</h2>
+                    <span class="cds-tag" [ngClass]="room.idStatus === 1 ? 'cds-tag--green' : 'cds-tag--yellow'">
+                        {{ room.idStatus === 1 ? 'Limpia / Activa' : 'Mantenimiento' }}
+                    </span>
+                </div>
+                <p class="cds-table-cell-muted" style="margin-bottom: 0.5rem;">Tipo: {{ room.roomType }}</p>
+                <p class="cds-table-cell-muted" style="margin-bottom: 1.5rem;">Capacidad: {{ room.guestCapacity }} personas</p>
+            </div>
+
+            <!-- Acciones -->
+            <div style="display: flex; gap: 0.5rem;">
+                <button *ngIf="room.idStatus === 2" 
+                        class="cds-btn-primary" 
+                        style="flex: 1;"
+                        (click)="changeStatus(room, 1)">
+                    <span class="material-symbols-outlined" style="margin-right: 0.5rem;">check_circle</span>
+                    Marcar Limpia
+                </button>
+
+                <button *ngIf="room.idStatus === 1" 
+                        class="cds-btn-danger" 
+                        style="flex: 1; background-color: var(--cds-support-error); color: white;"
+                        (click)="changeStatus(room, 2)">
+                    <span class="material-symbols-outlined" style="margin-right: 0.5rem;">build</span>
+                    Requiere Mantenimiento
+                </button>
+            </div>
+
+        </div>
+
+        <!-- Empty state -->
+        <div *ngIf="filteredRooms.length === 0" class="cds-empty-state" style="grid-column: 1 / -1;">
+            <div class="cds-empty-state__icon">
+                <span class="material-symbols-outlined">check_circle</span>
+            </div>
+            <p class="cds-empty-state__title">Todo al día</p>
+            <p class="cds-empty-state__description">No hay habitaciones en esta categoría.</p>
+        </div>
+
+    </div>
+</div>

@@ -13,6 +13,7 @@ export class RegistrerModalComponent implements OnInit, OnChanges {
   private fb = inject(FormBuilder);
   private userService = inject(UserService);
   isDarkMode: boolean = false;
+  showPassword = false;
 
   @Input() isOpen: boolean = false;
   @Input() roles: RoleDTO[] = [];
@@ -58,13 +59,13 @@ export class RegistrerModalComponent implements OnInit, OnChanges {
       idRole: [initialRoleId, [Validators.required]],
       firstName: [this.userToEdit?.firstName || '', [Validators.required]],
       lastName: [this.userToEdit?.lastName || '', [Validators.required]],
-      phone: [this.userToEdit?.phone || ''],
-      documentId: [this.userToEdit?.documentId || ''],
+      email: [this.userToEdit?.email || '', [Validators.required, Validators.email]],
+      phone: [this.userToEdit?.phone || '', [Validators.maxLength(8)]],
+      documentId: [this.userToEdit?.documentId || '', [Validators.required]],
       isActive: [this.userToEdit ? this.userToEdit.isActive : true]
     });
 
     if (!this.userToEdit) {
-      this.signUpForm.addControl('email', this.fb.control('', [Validators.required, Validators.email]));
       this.signUpForm.addControl('password', this.fb.control('', [Validators.required]));
     }
   }
@@ -85,6 +86,7 @@ export class RegistrerModalComponent implements OnInit, OnChanges {
             idRole: dataForm.idRole,
             firstName: dataForm.firstName,
             lastName: dataForm.lastName,
+            email: dataForm.email,
             phone: dataForm.phone,
             documentId: dataForm.documentId,
             isActive: dataForm.isActive

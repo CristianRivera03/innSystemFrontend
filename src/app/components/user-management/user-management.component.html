@@ -22,9 +22,26 @@
         (onClose)="closeRegisterModal()">
     </app-registrer-modal>
 
+    <!-- Filtros -->
+    <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+        <div class="cds-form-item" style="flex: 1; min-width: 250px; max-width: 400px;">
+            <label class="cds-label">Buscar usuario</label>
+            <input type="text" class="cds-text-input" [(ngModel)]="searchTerm" (input)="onFilterChange()" placeholder="Nombre, correo o DUI...">
+        </div>
+        <div class="cds-form-item" style="min-width: 200px;">
+            <label class="cds-label">Filtrar por Rol</label>
+            <select class="cds-select" [(ngModel)]="selectedRoleName" (change)="onFilterChange()">
+                <option value="">Todos los roles</option>
+                @for (role of roles; track role.idRole) {
+                    <option [value]="role.roleName">{{ role.roleName }}</option>
+                }
+            </select>
+        </div>
+    </div>
+
     <!-- User Grid -->
     <div class="cds-user-grid">
-        @for (user of users; track user.idUser) {
+        @for (user of paginatedUsersList; track user.idUser) {
             <div class="cds-card" style="display:flex; flex-direction:column; justify-content:space-between;">
 
                 <div style="display:flex; align-items:flex-start; gap:0.75rem; margin-bottom:1rem;">
@@ -77,4 +94,21 @@
             </div>
         }
     </div>
+
+    <!-- Paginación -->
+    @if (totalPages > 1) {
+        <div style="display: flex; justify-content: center; align-items: center; gap: 1rem; margin-top: 2rem;">
+            <button class="cds-btn-secondary cds-btn--sm" [disabled]="currentPage === 1" (click)="prevPage()">
+                <span class="material-symbols-outlined" style="font-size: 1.125rem;">chevron_left</span>
+                Anterior
+            </button>
+            <span style="font-size: 0.875rem; color: var(--cds-text-secondary); font-weight: 500;">
+                Página {{ currentPage }} de {{ totalPages }}
+            </span>
+            <button class="cds-btn-secondary cds-btn--sm" [disabled]="currentPage === totalPages" (click)="nextPage()">
+                Siguiente
+                <span class="material-symbols-outlined" style="font-size: 1.125rem;">chevron_right</span>
+            </button>
+        </div>
+    }
 </div>

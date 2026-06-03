@@ -1,0 +1,64 @@
+<div class="cds-my-bookings">
+    <div class="cds-my-bookings__container">
+        <div class="cds-my-bookings__header">
+            <h1>Mis Reservas</h1>
+            <p>Hola, <strong>{{ currentUser?.firstName }}</strong>. Aquí puedes ver el historial y estado de todas tus reservaciones.</p>
+        </div>
+
+        @if (isLoading) {
+            <div style="text-align: center; padding: 4rem;">Cargando tus reservas...</div>
+        } @else if (myBookings.length === 0) {
+            <div class="cds-my-bookings__empty">
+                <span class="material-symbols-outlined" style="font-size: 3rem; color: var(--cds-text-secondary); margin-bottom: 1rem;">event_busy</span>
+                <h2>Aún no tienes reservas</h2>
+                <p>Parece que no has realizado ninguna reserva. ¡Anímate a planear tu próxima estadía!</p>
+                <a routerLink="/home" class="cds-btn-primary" style="margin-top: 1.5rem;">Buscar Disponibilidad</a>
+            </div>
+        } @else {
+            <div class="cds-my-bookings__list">
+                @for (booking of myBookings; track booking.idBooking) {
+                    <div class="cds-booking-card">
+                        <div class="cds-booking-card__header">
+                            <div>
+                                <h3>Reserva #{{ booking.idBooking.substring(0, 8) | uppercase }}</h3>
+                            </div>
+                            <span class="cds-status-tag" [ngClass]="getStatusClass(booking.idStatus)">
+                                {{ getStatusName(booking.idStatus, booking.status) }}
+                            </span>
+                        </div>
+                        
+                        <div class="cds-booking-card__body">
+                            <div class="cds-booking-card__info-group">
+                                <span>Check-In</span>
+                                <strong>{{ booking.checkIn | date:'mediumDate' }}</strong>
+                            </div>
+                            <div class="cds-booking-card__info-group">
+                                <span>Check-Out</span>
+                                <strong>{{ booking.checkOut | date:'mediumDate' }}</strong>
+                            </div>
+                            <div class="cds-booking-card__info-group">
+                                <span>Habitación</span>
+                                <strong>#{{ booking.roomNumber }}</strong>
+                            </div>
+                            <div class="cds-booking-card__info-group">
+                                <span>Huéspedes</span>
+                                <strong>{{ booking.guestsCount }}</strong>
+                            </div>
+                        </div>
+
+                        <div class="cds-booking-card__footer">
+                            <div class="cds-booking-card__total">
+                                <span>Total</span>
+                                <strong>${{ booking.totalCost | number:'1.2-2' }}</strong>
+                            </div>
+                            
+                            @if (booking.idStatus === 1) {
+                                <button class="cds-btn-secondary cds-btn--sm">Pagar Ahora</button>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>

@@ -28,5 +28,6 @@ import { ServiceDTO } from "./room";
 export interface CatalogDTO {
     roomTypes: RoomTypeDTO[];
     roomStatuses: StatusDTO[];
+    bookingStatuses: StatusDTO[];
     services: ServiceDTO[];
 }

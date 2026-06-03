@@ -7,10 +7,13 @@ import { RoomService } from '../../services/room.service';
 import { BookingDTO } from '../../models/booking';
 import { RoomDTO } from '../../models/room';
 
+import { BaseChartDirective } from 'ng2-charts';
+import { ChartConfiguration, ChartData, ChartType, ChartOptions } from 'chart.js';
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, BaseChartDirective],
   templateUrl: './dashboard.component.html',
 })
 
@@ -41,9 +44,64 @@ export class DashboardComponent implements OnInit {
 
   // Recent activity
   recentBookings: BookingDTO[] = [];
+  
+  // Daily operations
+  checkInsToday: BookingDTO[] = [];
+  checkOutsToday: BookingDTO[] = [];
 
   // Current date
   currentDate = new Date();
+
+  // --- Chart.js Configurations ---
+
+  // 1. Room Status Doughnut Chart
+  public doughnutChartLabels: string[] = [ 'Activas', 'Mantenimiento', 'Inactivas' ];
+  public doughnutChartData: ChartData<'doughnut'> = {
+    labels: this.doughnutChartLabels,
+    datasets: [
+      { 
+        data: [0, 0, 0],
+        backgroundColor: ['#24a148', '#f1c21b', '#da1e28'],
+        hoverBackgroundColor: ['#198038', '#d2a106', '#a2191f'],
+        borderWidth: 0
+      }
+    ]
+  };
+  public doughnutChartType: 'doughnut' = 'doughnut';
+  public doughnutChartOptions: ChartOptions<'doughnut'> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { color: '#8d8d8d' } }
+    },
+    cutout: '75%'
+  };
+
+  // 2. Revenue Bar Chart
+  public barChartOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false }
+    },
+    scales: {
+      x: { grid: { display: false }, ticks: { color: '#8d8d8d' } },
+      y: { grid: { color: '#393939' }, ticks: { color: '#8d8d8d' } }
+    }
+  };
+  public barChartType: 'bar' = 'bar';
+  public barChartData: ChartData<'bar'> = {
+    labels: ['Hace 4 Meses', 'Hace 3 Meses', 'Hace 2 Meses', 'Mes Pasado', 'Este Mes'],
+    datasets: [
+      { 
+        data: [0, 0, 0, 0, 0], 
+        label: 'Ingresos ($)',
+        backgroundColor: '#0f62fe',
+        hoverBackgroundColor: '#0043ce',
+        borderRadius: 4
+      }
+    ]
+  };
 
   ngOnInit() {
     this.loadUserSession();
@@ -105,6 +163,34 @@ export class DashboardComponent implements OnInit {
         return dateB - dateA;
       })
       .slice(0, 5);
+      
+    // Operaciones diarias
+    const todayStr = new Date().toISOString().split('T')[0];
+    this.checkInsToday = this.bookings.filter(b => b.checkIn.split('T')[0] === todayStr && b.status !== 'Cancelled');
+    this.checkOutsToday = this.bookings.filter(b => b.checkOut.split('T')[0] === todayStr && b.status !== 'Cancelled');
+    
+    this.calculateRevenueChartData();
+  }
+
+  calculateRevenueChartData() {
+    // Basic simulation for the last 5 months based on bookings
+    const monthlyRevenue = [0, 0, 0, 0, 0];
+    const now = new Date();
+    
+    this.bookings.forEach(b => {
+      if (b.status === 'Cancelled' || b.status === 'No_Show') return;
+      const bDate = new Date(b.checkIn);
+      // Diff in months
+      const diffMonths = (now.getFullYear() - bDate.getFullYear()) * 12 + (now.getMonth() - bDate.getMonth());
+      if (diffMonths >= 0 && diffMonths < 5) {
+        // Index 4 is current month, index 0 is 4 months ago
+        monthlyRevenue[4 - diffMonths] += (b.totalCost || 0);
+      }
+    });
+
+    this.barChartData.datasets[0].data = monthlyRevenue;
+    // Update chart references to trigger change detection
+    this.barChartData = { ...this.barChartData };
   }
 
   calculateRoomStats() {
@@ -112,6 +198,10 @@ export class DashboardComponent implements OnInit {
     this.activeRooms = this.rooms.filter(r => r.operationalStatus === 'Active').length;
     this.maintenanceRooms = this.rooms.filter(r => r.operationalStatus === 'Maintenance').length;
     this.inactiveRooms = this.rooms.filter(r => r.operationalStatus === 'Inactive').length;
+    
+    // Update Doughnut Chart
+    this.doughnutChartData.datasets[0].data = [this.activeRooms, this.maintenanceRooms, this.inactiveRooms];
+    this.doughnutChartData = { ...this.doughnutChartData };
   }
 
   getStatusLabel(status: string): string {

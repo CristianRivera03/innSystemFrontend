@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment.development';
@@ -33,6 +33,22 @@ export class UserService {
     return this.http.get<UserDTO[]>(`${this.apiURL}`)
   }
 
+  // Obtener users paginados y filtrados
+  getPaginatedUsers(search: string, roleName: string, page: number, limit: number): Observable<ResponseAPI<any>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('limit', limit.toString());
+
+    if (search) {
+      params = params.set('search', search);
+    }
+    if (roleName) {
+      params = params.set('roleName', roleName);
+    }
+
+    return this.http.get<ResponseAPI<any>>(`${this.apiURL}/paginated`, { params });
+  }
+
   //Regfistro pide un UserCreate y devuelve un user normal porque si devuelve un create 
   // traerla contraseña en plaintext
   signUp(userData: UserCreateDTO): Observable<ResponseAPI<UserDTO>> {
@@ -61,6 +77,16 @@ export class UserService {
   //Actualizar user
   updateUser(idUser: string, userData: UserUpdateDTO): Observable<ResponseAPI<boolean>> {
     return this.http.put<ResponseAPI<boolean>>(`${this.apiURL}/Update/${idUser}`, userData);
+  }
+
+  //Olvidé mi contraseña
+  forgotPassword(email: string): Observable<ResponseAPI<boolean>> {
+    return this.http.post<ResponseAPI<boolean>>(`${this.apiURL}/forgot-password`, { email });
+  }
+
+  //Restablecer contraseña
+  resetPassword(payload: { email: string; token: string; newPassword: string }): Observable<ResponseAPI<boolean>> {
+    return this.http.post<ResponseAPI<boolean>>(`${this.apiURL}/reset-password`, payload);
   }
 
 }

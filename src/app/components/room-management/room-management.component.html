@@ -39,62 +39,81 @@
 
     <!-- Grid View -->
     <div *ngIf="rooms.length > 0 && viewMode === 'grid'" class="cds-room-grid cds-animate-fade-in">
-        <div *ngFor="let room of rooms" class="cds-card" style="padding:0; display:flex; flex-direction:column; overflow:hidden;">
+        <div *ngFor="let room of rooms" class="cds-room-card">
 
-            <!-- Image -->
-            <div style="position:relative; height:10rem; background-color:var(--cds-layer-02);">
-                <img *ngIf="room.images && room.images.length > 0" [src]="room.images[0].url" alt="Habitación" style="width:100%; height:100%; object-fit:cover;">
-                <div *ngIf="!room.images || room.images.length === 0" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:var(--cds-text-secondary);">
-                    <span class="material-symbols-outlined" style="font-size:2.5rem;">bed</span>
+            <!-- Image with overlay -->
+            <div class="cds-room-card__image-wrap">
+                <img *ngIf="room.images && room.images.length > 0"
+                    [src]="room.images[0].url"
+                    alt="Habitación {{ room.roomNumber }}"
+                    class="cds-room-card__image">
+                <div *ngIf="!room.images || room.images.length === 0" class="cds-room-card__image-placeholder">
+                    <span class="material-symbols-outlined">bed</span>
                 </div>
-                <span class="cds-tag" style="position:absolute; top:0.5rem; right:0.5rem;"
+
+                <!-- Gradient overlay -->
+                <div class="cds-room-card__overlay"></div>
+
+                <!-- Status badge -->
+                <span class="cds-room-card__status cds-tag"
                     [ngClass]="{
                         'cds-tag--green': room.operationalStatus === 'Active',
                         'cds-tag--yellow': room.operationalStatus === 'Maintenance',
                         'cds-tag--red': room.operationalStatus === 'Inactive'
                     }">
+                    <span class="cds-room-card__status-dot"
+                        [ngClass]="{
+                            'cds-room-card__status-dot--green': room.operationalStatus === 'Active',
+                            'cds-room-card__status-dot--yellow': room.operationalStatus === 'Maintenance',
+                            'cds-room-card__status-dot--red': room.operationalStatus === 'Inactive'
+                        }"></span>
                     {{ room.operationalStatus === 'Active' ? 'Activa' :
                        room.operationalStatus === 'Maintenance' ? 'Mantenimiento' : 'Inactiva' }}
                 </span>
+
+                <!-- Room number overlay on image -->
+                <div class="cds-room-card__number">
+                    <span class="material-symbols-outlined">door_front</span>
+                    Hab. {{ room.roomNumber }}
+                </div>
             </div>
 
             <!-- Content -->
-            <div style="padding:1rem; flex:1; display:flex; flex-direction:column;">
-                <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.5rem;">
-                    <div>
-                        <h3 style="font-size:1rem; font-weight:600; color:var(--cds-interactive);">Hab. {{ room.roomNumber }}</h3>
-                        <span style="font-size:0.75rem; color:var(--cds-text-secondary); text-transform:uppercase; letter-spacing:0.16px;">{{ room.roomType }}</span>
-                    </div>
-                    <div style="text-align:right;">
-                        <div style="font-size:1rem; font-weight:600; color:var(--cds-text-primary);">${{ room.basePrice | number:'1.2-2' }}</div>
-                        <div style="font-size:0.75rem; color:var(--cds-text-secondary);">por noche</div>
+            <div class="cds-room-card__body">
+
+                <!-- Type + Price row -->
+                <div class="cds-room-card__header-row">
+                    <div class="cds-room-card__type-badge">{{ room.roomType }}</div>
+                    <div class="cds-room-card__price-block">
+                        <span class="cds-room-card__price">${{ room.basePrice | number:'1.2-2' }}</span>
+                        <span class="cds-room-card__price-label">/ noche</span>
                     </div>
                 </div>
 
-                <p style="font-size:0.75rem; color:var(--cds-text-secondary); flex:1; margin-top:0.25rem;">{{ room.description || 'Sin descripción' }}</p>
+                <!-- Description -->
+                <p class="cds-room-card__description">{{ room.description || 'Sin descripción disponible.' }}</p>
 
                 <!-- Services -->
-                <div *ngIf="room.services && room.services.length > 0" style="display:flex; gap:0.25rem; flex-wrap:wrap; margin-top:0.5rem;">
-                    <span *ngFor="let s of room.services | slice:0:3" class="cds-tag cds-tag--gray" style="font-size:0.625rem;">
+                <div *ngIf="room.services && room.services.length > 0" class="cds-room-card__services">
+                    <span *ngFor="let s of room.services | slice:0:3" class="cds-tag cds-tag--gray cds-room-card__service-tag">
                         {{ s.name }}
                     </span>
-                    <span *ngIf="room.services.length > 3" class="cds-tag cds-tag--gray" style="font-size:0.625rem;">
-                        +{{ room.services.length - 3 }}
+                    <span *ngIf="room.services.length > 3" class="cds-tag cds-tag--gray cds-room-card__service-tag">
+                        +{{ room.services.length - 3 }} más
                     </span>
                 </div>
 
                 <!-- Footer -->
-                <div style="margin-top:0.75rem; padding-top:0.75rem; border-top:1px solid var(--cds-border-subtle); display:flex; align-items:center; justify-content:space-between;">
-                    <span style="font-size:0.75rem; color:var(--cds-text-secondary); display:flex; align-items:center; gap:0.25rem;">
-                        <span class="material-symbols-outlined" style="font-size:1rem;">group</span>
+                <div class="cds-room-card__footer">
+                    <span class="cds-room-card__capacity">
+                        <span class="material-symbols-outlined">group</span>
                         {{ room.guestCapacity }} {{ room.guestCapacity === 1 ? 'persona' : 'personas' }}
                     </span>
-
-                    <div style="display:flex; gap:0.25rem;">
+                    <div class="cds-room-card__actions">
                         <button (click)="openUpdateModal(room)" class="cds-btn-icon" title="Editar habitación">
                             <span class="material-symbols-outlined" style="font-size:1.125rem;">edit_square</span>
                         </button>
-                        <button (click)="inactivateRoom(room)" class="cds-btn-icon" title="Dar de baja" style="color:var(--cds-support-error);">
+                        <button (click)="inactivateRoom(room)" class="cds-btn-icon cds-btn-icon--danger" title="Dar de baja">
                             <span class="material-symbols-outlined" style="font-size:1.125rem;">delete</span>
                         </button>
                     </div>

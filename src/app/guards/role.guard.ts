@@ -16,9 +16,14 @@ export const roleGuard: CanActivateFn = (route, state) => {
     //extraer la url destino
     const urlDestino = state.url.split("?")[0];
 
+    // Permitir acceso directo a 'my-bookings' para los clientes (sin requerir módulo en base de datos)
+    if (urlDestino === '/my-bookings' && (user.roleName?.toLowerCase() === 'client' || user.roleName?.toLowerCase() === 'cliente')) {
+      return true;
+    }
+
     if (!user.allowedModules || user.allowedModules.length === 0) {
-      alert("Tu cuenta no tiene permisos asignados. Contacta al administrador.");
-      router.navigate(["/login"]);
+      console.warn("Acceso denegado: La cuenta no cuenta con permisos asignados.");
+      router.navigate(["/home"]);
       return false;
     }
 
@@ -30,14 +35,13 @@ export const roleGuard: CanActivateFn = (route, state) => {
     if (tienePermiso) {
       return true;
     } else {
-      alert("What do you looking for?")
-      const rutaReturn = user.allowedModules[0].frontendPath;
-      router.navigate([rutaReturn]);
+      console.warn(`Acceso denegado: Intento de acceder al módulo '${urlDestino}' sin permisos.`);
+      router.navigate(["/home"]);
       return false;
     }
   }
 
-  //si no hay session retorna al login
-  router.navigate(["/login"]);
+  //si no hay session retorna al home
+  router.navigate(["/home"]);
   return false;
 };

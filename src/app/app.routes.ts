@@ -10,13 +10,47 @@ import { DatalogComponent } from './components/datalog/datalog.component';
 import { RoomManagementComponent } from './components/room-management/room-management.component';
 import { BookingManagementComponent } from './components/booking-management/booking-management.component';
 import { GeneralManagementComponent } from './components/catalogs/general-management/general-management.component';
+import { PaymentReturnComponent } from './components/payment-return/payment-return.component';
+import { HousekeepingComponent } from './components/housekeeping/housekeeping.component';
+import { FinancialReportsComponent } from './components/financial-reports/financial-reports.component';
+
+// Public Components
+import { PublicLayoutComponent } from './components/public/public-layout/public-layout.component';
+import { HomeComponent } from './components/public/home/home.component';
+import { PublicSearchComponent } from './components/public/public-search/public-search.component';
+import { PublicCheckoutComponent } from './components/public/public-checkout/public-checkout.component';
+import { MyBookingsComponent } from './components/public/my-bookings/my-bookings.component';
+import { ForgotPasswordComponent } from './components/public/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './components/public/reset-password/reset-password.component';
 
 export const routes: Routes = [
-    { path: '', redirectTo: 'login', pathMatch: 'full' },
+    { path: '', redirectTo: 'home', pathMatch: 'full' },
+    
+    // Rutas del Admin (Login y Dashboard)
     { path: 'login', component: LoginComponent },
-    //{path: "signup" , component: SignUpComponent},
+    { path: 'forgot-password', component: ForgotPasswordComponent },
+    { path: 'reset-password', component: ResetPasswordComponent },
+    { path: 'payment-return', component: PaymentReturnComponent },
 
-    //Ruta padre 
+    // Vista Pública
+    {
+        path: '',
+        component: PublicLayoutComponent,
+        children: [
+            { path: 'home', component: HomeComponent },
+            { path: 'search', component: PublicSearchComponent },
+            { path: 'checkout', component: PublicCheckoutComponent },
+            // My Bookings requiere estar autenticado (puedes usar un guard distinto si es necesario, 
+            // o el roleGuard adaptado para aceptar 'Client')
+            { 
+                path: 'my-bookings', 
+                component: MyBookingsComponent,
+                canActivate: [roleGuard] // Asegúrate de que el roleGuard permita al Client entrar a esta ruta
+            }
+        ]
+    },
+
+    // Ruta padre del Dashboard Interno
     {
         path: 'dashboard',
         component: LayoutComponent,
@@ -60,8 +94,19 @@ export const routes: Routes = [
                 path: 'general-management',
                 component: GeneralManagementComponent,
                 canActivate: [roleGuard]
-            }
+            },
 
+            {
+                path: 'housekeeping',
+                component: HousekeepingComponent,
+                canActivate: [roleGuard]
+            },
+
+            {
+                path: 'reports',
+                component: FinancialReportsComponent,
+                canActivate: [roleGuard]
+            }
 
         ]
     }

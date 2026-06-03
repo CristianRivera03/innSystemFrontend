@@ -1,0 +1,46 @@
+<div class="cds-public-layout">
+    <!-- Navbar / Header Público -->
+    <header class="cds-public-header">
+        <div class="cds-public-header__container">
+            <a routerLink="/home" class="cds-public-header__brand">
+                <span class="material-symbols-outlined" style="font-size: 1.5rem; color: var(--cds-interactive);">apartment</span>
+                Hotel <span>Continental</span>
+            </a>
+
+            <nav class="cds-public-header__nav">
+                <a routerLink="/home" class="cds-public-header__link">Inicio</a>
+                
+                @if (isLoggedIn) {
+                    <a routerLink="/my-bookings" class="cds-public-header__link">Mis Reservas</a>
+                    <button class="cds-btn-secondary cds-btn--sm" (click)="logout()">Cerrar Sesión</button>
+                    <a routerLink="/dashboard" *ngIf="isAdmin" class="cds-btn-primary cds-btn--sm">Ir al Dashboard</a>
+                } @else {
+                    <a routerLink="/login" class="cds-btn-primary cds-btn--sm">Iniciar Sesión</a>
+                }
+            </nav>
+        </div>
+    </header>
+
+    <!-- Contenido Principal (Landing, Search, Checkout, etc.) -->
+    <main class="cds-public-main">
+        <router-outlet></router-outlet>
+    </main>
+
+    <!-- Footer Público -->
+    <footer class="cds-public-footer">
+        <div class="cds-public-footer__container">
+            <div class="cds-public-footer__info">
+                <h3>Hotel Continental</h3>
+                <p>Tu comodidad es nuestra prioridad. Disfruta de la mejor experiencia de estadía con nosotros.</p>
+            </div>
+            <div class="cds-public-footer__links">
+                <a href="#">Términos y Condiciones</a>
+                <a href="#">Política de Privacidad</a>
+                <a href="#">Contacto</a>
+            </div>
+        </div>
+        <div class="cds-public-footer__copyright">
+            &copy; {{ currentYear }} Hotel Continental. Todos los derechos reservados.
+        </div>
+    </footer>
+</div>

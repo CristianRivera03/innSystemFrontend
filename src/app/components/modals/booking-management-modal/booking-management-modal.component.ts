@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { BookingService } from '../../../services/booking.service';
 import { RoomService } from '../../../services/room.service';
 import { UserService } from '../../../services/user.service';
+import { CatalogService } from '../../../services/catalog.service';
 import { BookingCreateDTO, BookingDTO } from '../../../models/booking';
 import { RoomDTO } from '../../../models/room';
 import { UserDTO } from '../../../models/user';
@@ -11,6 +12,10 @@ import { CommonModule } from '@angular/common';
 import { RegistrerModalComponent } from '../registrer-modal/registrer-modal.component';
 import { RoleDTO } from '../../../models/role';
 import { RoleService } from '../../../services/role.service';
+import { StatusDTO } from '../../../models/catalog';
+import { environment } from '../../../../environments/environment.development';
+import { SeasonService } from '../../../services/season.service';
+import { SeasonDTO } from '../../../models/season';
 
 @Component({
   selector: 'app-booking-management-modal',
@@ -25,6 +30,17 @@ export class BookingManagementModalComponent implements OnInit {
   private roomService = inject(RoomService);
   private userService = inject(UserService);
   private roleService = inject(RoleService);
+  private catalogService = inject(CatalogService);
+  private seasonService = inject(SeasonService);
+
+  // Mapa de traducción para nombres que vienen del backend en inglés
+  private statusLabels: Record<string, string> = {
+    'Pending':   'Pendiente',
+    'Confirmed': 'Confirmada',
+    'Cancelled': 'Cancelada',
+    'Completed': 'Completada',
+    'No_Show':   'No Show',
+  };
 
   @Input() isOpen: boolean = false;
   @Input() bookingToEdit: BookingDTO | null = null;
@@ -35,19 +51,14 @@ export class BookingManagementModalComponent implements OnInit {
   rooms: RoomDTO[] = [];
   users: UserDTO[] = [];
   roles: RoleDTO[] = [];
+  bookingStatuses: { id: number; name: string; label: string }[] = [];
+  seasons: SeasonDTO[] = [];
+  appliedSeasons: string[] = [];
   isLoading = true;
   isSaving = false;
   isDarkMode = false;
   
   isRegisterModalOpen = false;
-
-  // Assuming generic statuses since we don't have a catalog endpoint for booking statuses
-  bookingStatuses = [
-    { id: 1, name: 'Pendiente' },
-    { id: 2, name: 'Confirmada' },
-    { id: 3, name: 'Completada' },
-    { id: 4, name: 'Cancelada' }
-  ];
 
   constructor() {
     this.bookingForm = this.fb.group({
@@ -97,11 +108,12 @@ export class BookingManagementModalComponent implements OnInit {
           if (selectedRoomId) {
             const room = this.rooms.find(r => r.idRoom == selectedRoomId);
             if (room) {
-              this.totalCost = diffDays * room.basePrice;
+              this.calculateDynamicCost(checkInDate, checkOutDate, room.basePrice);
             }
           }
         } else {
           this.totalCost = 0;
+          this.appliedSeasons = [];
         }
       }
     });
@@ -113,6 +125,21 @@ export class BookingManagementModalComponent implements OnInit {
   loadDependencies() {
     this.isLoading = true;
     this.roleService.getAllRoles().subscribe({ next: (res: any) => this.roles = res.value || res || [] });
+    this.catalogService.getAllCatalogs().subscribe({
+      next: (res) => {
+        const statuses = res.value?.bookingStatuses || [];
+        this.bookingStatuses = statuses.map((s: StatusDTO) => ({
+          id: s.id,
+          name: s.name,
+          label: this.statusLabels[s.name] || s.name
+        }));
+      },
+      error: (err) => console.error('Error cargando estados de reserva', err)
+    });
+    this.seasonService.getAll().subscribe({
+      next: (res: any) => this.seasons = res.value || res || [],
+      error: (err) => console.error("Error cargando temporadas", err)
+    });
     this.loadUsers();
     this.isLoading = false;
   }
@@ -191,6 +218,32 @@ export class BookingManagementModalComponent implements OnInit {
 
   totalCost = 0;
 
+  calculateDynamicCost(checkIn: Date, checkOut: Date, basePrice: number) {
+    let total = 0;
+    let currentDate = new Date(checkIn);
+    const seasonsApplied = new Set<string>();
+    
+    while (currentDate < checkOut) {
+      let dailyMultiplier = 1.0;
+      const currentIso = currentDate.toISOString().split('T')[0];
+      
+      const applicableSeason = this.seasons.find(s => {
+        return currentIso >= s.startDate.split('T')[0] && currentIso <= s.endDate.split('T')[0];
+      });
+      
+      if (applicableSeason) {
+        dailyMultiplier = applicableSeason.priceMultiplier;
+        seasonsApplied.add(`${applicableSeason.seasonName} (x${applicableSeason.priceMultiplier})`);
+      }
+      
+      total += basePrice * dailyMultiplier;
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    
+    this.totalCost = total;
+    this.appliedSeasons = Array.from(seasonsApplied);
+  }
+
   openRegisterModal(event: Event) {
     event.preventDefault();
     this.isRegisterModalOpen = true;
@@ -218,6 +271,7 @@ export class BookingManagementModalComponent implements OnInit {
           idStatus: this.bookingToEdit.idStatus,
         });
         this.totalCost = this.bookingToEdit.totalCost || 0;
+        this.appliedSeasons = []; // Al editar no recalculamos para no confundir el precio histórico, a menos que cambie algo
         
         const usr = this.users.find(u => u.idUser === this.bookingToEdit?.idUser);
         if (usr) this.selectedUserText = `${usr.firstName} ${usr.lastName}`;
@@ -296,7 +350,7 @@ export class BookingManagementModalComponent implements OnInit {
 
   generateWompiPayment(bookingId: string) {
     this.isSaving = true;
-    fetch(`http://localhost:5033/api/Payment/wompi-link/${bookingId}`, {
+    fetch(`${environment.endpoint}Payment/wompi-link/${bookingId}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' }
     })
@@ -304,7 +358,9 @@ export class BookingManagementModalComponent implements OnInit {
     .then(data => {
       this.isSaving = false;
       if (data.urlEnlace) {
-        window.location.href = data.urlEnlace; // Redirección a pasarela Wompi
+        window.open(data.urlEnlace, '_blank', 'noopener,noreferrer'); // Abre Wompi en nueva pestaña
+        this.onSuccess.emit();
+        this.closeModal();
       } else {
         alert("Reserva creada, pero hubo un error generando enlace de pago Wompi.");
         this.onSuccess.emit();

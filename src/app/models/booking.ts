@@ -7,6 +7,7 @@ export interface BookingDTO {
     phone?: string;
     documentId?: string;
     idRoom: number;
+    roomNumber?: string;
     checkIn: string; 
     checkOut: string;
     guestsCount: number;

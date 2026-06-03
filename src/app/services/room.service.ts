@@ -72,5 +72,12 @@ export class RoomService {
     return this.http.delete<ResponseAPI<RoomDTO>>(`${this.apiURL}/${idRoom}`)
   }
 
+  // Cambiar estatus operativo (para Housekeeping)
+  changeOperationalStatus(idRoom: number, statusId: number): Observable<ResponseAPI<boolean>> {
+    return this.http.patch<ResponseAPI<boolean>>(`${this.apiURL}/${idRoom}/status`, statusId, {
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+
 
 }

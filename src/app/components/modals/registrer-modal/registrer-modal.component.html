@@ -50,32 +50,42 @@
                     <!-- DUI y Teléfono -->
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
                         <div class="cds-form-item">
-                            <label class="cds-label" for="reg-document">DUI (Opcional)</label>
+                            <label class="cds-label" for="reg-document">DUI / Identificación</label>
                             <input class="cds-text-input" type="text" id="reg-document" formControlName="documentId" placeholder="Ej: 00000000-0">
+                            @if(signUpForm.get('documentId')?.invalid && signUpForm.get('documentId')?.touched){
+                                <small class="cds-form-error">La identificación es obligatoria</small>
+                            }
                         </div>
 
                         <div class="cds-form-item">
                             <label class="cds-label" for="reg-phone">Teléfono (Opcional)</label>
-                            <input class="cds-text-input" type="text" id="reg-phone" formControlName="phone" placeholder="Ej: 7777-7777">
+                            <input class="cds-text-input" type="text" id="reg-phone" formControlName="phone" placeholder="Ej: 70001234" maxlength="8">
+                            @if(signUpForm.get('phone')?.invalid && signUpForm.get('phone')?.touched){
+                                <small class="cds-form-error">Máximo 8 dígitos</small>
+                            }
                         </div>
                     </div>
 
+                    <!-- Email (Visible in both create and edit) -->
+                    <div class="cds-form-item">
+                        <label class="cds-label" for="reg-email">Correo Electrónico</label>
+                        <input class="cds-text-input" type="email" id="reg-email" formControlName="email" placeholder="correo@ejemplo.com">
+                        @if(signUpForm.get('email')?.invalid && signUpForm.get('email')?.touched){
+                            <small class="cds-form-error">Ingresa un correo válido</small>
+                        }
+                    </div>
+
                     @if (!userToEdit) {
-                        <!-- Email -->
-                        <div class="cds-form-item">
-                            <label class="cds-label" for="reg-email">Correo Electrónico</label>
-                            <input class="cds-text-input" type="email" id="reg-email" formControlName="email" placeholder="correo@ejemplo.com">
-                            @if(signUpForm.get('email')?.invalid && signUpForm.get('email')?.touched){
-                                <small class="cds-form-error">Ingresa un correo válido</small>
-                            }
-                        </div>
-                        
                         <!-- Contraseña -->
                         <div class="cds-form-item">
                             <label class="cds-label" for="reg-pass">Contraseña</label>
                             <div style="position:relative;">
-                                <input class="cds-text-input" type="password" id="reg-pass" formControlName="password" placeholder="Ingresa una contraseña" style="padding-right:2.5rem;">
-                                <span class="material-symbols-outlined" style="position:absolute; right:0.75rem; top:50%; transform:translateY(-50%); color:var(--cds-text-secondary); cursor:pointer;">visibility</span>
+                                <input class="cds-text-input" [type]="showPassword ? 'text' : 'password'" id="reg-pass" formControlName="password" placeholder="Ingresa una contraseña" style="padding-right:2.5rem;">
+                                <span class="material-symbols-outlined" 
+                                      style="position:absolute; right:0.75rem; top:50%; transform:translateY(-50%); color:var(--cds-text-secondary); cursor:pointer;"
+                                      (click)="showPassword = !showPassword">
+                                    {{ showPassword ? 'visibility_off' : 'visibility' }}
+                                </span>
                             </div>
                             @if(signUpForm.get("password")?.invalid && signUpForm.get("password")?.touched){
                                 <small class="cds-form-error">La contraseña es requerida</small>

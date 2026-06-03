@@ -39,8 +39,127 @@
 
     </div>
 
-    <!-- Dashboard Grid: Recent Bookings + Room Status -->
+    <!-- Panel de Gráficos -->
+    <div class="cds-dashboard-grid" style="margin-bottom: 2rem;">
+        
+        <!-- Gráfico de Ocupación -->
+        <div class="cds-dashboard-section">
+            <div class="cds-dashboard-section__header">
+                <span class="material-symbols-outlined" style="font-size:1.125rem;">pie_chart</span>
+                Distribución de Habitaciones
+            </div>
+            <div class="cds-dashboard-section__body" style="height: 300px; display:flex; justify-content:center; align-items:center;">
+                <canvas baseChart 
+                  [data]="doughnutChartData" 
+                  [type]="doughnutChartType" 
+                  [options]="doughnutChartOptions">
+                </canvas>
+            </div>
+        </div>
+
+        <!-- Gráfico de Ingresos -->
+        <div class="cds-dashboard-section">
+            <div class="cds-dashboard-section__header">
+                <span class="material-symbols-outlined" style="font-size:1.125rem;">bar_chart</span>
+                Tendencia de Ingresos (Últimos 5 meses)
+            </div>
+            <div class="cds-dashboard-section__body" style="height: 300px;">
+                <canvas baseChart 
+                  [data]="barChartData" 
+                  [type]="barChartType" 
+                  [options]="barChartOptions">
+                </canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel Operativo Diario (Check-ins / Check-outs) -->
     <div class="cds-dashboard-grid">
+
+        <!-- Check-ins Hoy -->
+        <div class="cds-dashboard-section">
+            <div class="cds-dashboard-section__header">
+                <span class="material-symbols-outlined" style="font-size:1.125rem; color:var(--cds-support-success);">calendar_check</span>
+                Llegadas de Hoy (Check-ins)
+            </div>
+            <div class="cds-dashboard-section__body">
+                <div *ngIf="checkInsToday.length === 0" class="cds-empty-state" style="border:none;">
+                    <div class="cds-empty-state__icon">
+                        <span class="material-symbols-outlined">event_busy</span>
+                    </div>
+                    <p class="cds-empty-state__title">Sin llegadas</p>
+                    <p class="cds-empty-state__description">No hay check-ins programados para hoy.</p>
+                </div>
+
+                <table *ngIf="checkInsToday.length > 0" class="cds-data-table">
+                    <thead>
+                        <tr>
+                            <th>Huésped</th>
+                            <th>Habitaciones</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let booking of checkInsToday">
+                            <td>
+                                <div style="font-weight:500;">{{ booking.firstName }} {{ booking.lastName }}</div>
+                            </td>
+                            <td>{{ booking.idRoom }}</td>
+                            <td>
+                                <span class="cds-tag" [ngClass]="getStatusClass(booking.status)">
+                                    {{ getStatusLabel(booking.status) }}
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Check-outs Hoy -->
+        <div class="cds-dashboard-section">
+            <div class="cds-dashboard-section__header">
+                <span class="material-symbols-outlined" style="font-size:1.125rem; color:var(--cds-support-error);">event_upcoming</span>
+                Salidas de Hoy (Check-outs)
+            </div>
+            <div class="cds-dashboard-section__body">
+                <div *ngIf="checkOutsToday.length === 0" class="cds-empty-state" style="border:none;">
+                    <div class="cds-empty-state__icon">
+                        <span class="material-symbols-outlined">event_busy</span>
+                    </div>
+                    <p class="cds-empty-state__title">Sin salidas</p>
+                    <p class="cds-empty-state__description">No hay check-outs programados para hoy.</p>
+                </div>
+
+                <table *ngIf="checkOutsToday.length > 0" class="cds-data-table">
+                    <thead>
+                        <tr>
+                            <th>Huésped</th>
+                            <th>Habitaciones</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let booking of checkOutsToday">
+                            <td>
+                                <div style="font-weight:500;">{{ booking.firstName }} {{ booking.lastName }}</div>
+                            </td>
+                            <td>{{ booking.idRoom }}</td>
+                            <td>
+                                <span class="cds-tag" [ngClass]="getStatusClass(booking.status)">
+                                    {{ getStatusLabel(booking.status) }}
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Panel de Actividad Reciente y Estado de Habitaciones (Restaurado) -->
+    <div class="cds-dashboard-grid" style="margin-top: 2rem;">
 
         <!-- Actividad Reciente -->
         <div class="cds-dashboard-section">

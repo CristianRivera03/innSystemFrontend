@@ -20,14 +20,29 @@
                 <div class="cds-form-item">
                     <label class="cds-label">Contraseña</label>
                     <div style="position:relative;">
-                        <input class="cds-text-input" type="password" formControlName="password" placeholder="Ingresa tu contraseña" style="padding-right:2.5rem;">
-                        <span class="material-symbols-outlined" style="position:absolute; top:50%; right:0.75rem; transform:translateY(-50%); color:var(--cds-text-secondary); cursor:pointer; font-size:1.25rem;">visibility</span>
+                        <input class="cds-text-input" [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="Ingresa tu contraseña" style="padding-right:2.5rem;">
+                        <span class="material-symbols-outlined" 
+                              style="position:absolute; top:50%; right:0.75rem; transform:translateY(-50%); color:var(--cds-text-secondary); cursor:pointer; font-size:1.25rem;"
+                              (click)="showPassword = !showPassword">
+                            {{ showPassword ? 'visibility_off' : 'visibility' }}
+                        </span>
+                    </div>
+                    <div style="text-align: right; margin-top: 0.5rem;">
+                        <a routerLink="/forgot-password" class="cds-link" style="font-size: 0.875rem; font-weight: 500;">¿Olvidaste tu contraseña?</a>
                     </div>
                 </div>
 
                 <button class="cds-btn-primary" type="submit" [disabled]="loginForm.invalid" style="width:100%; margin-top:0.5rem;">
                     Ingresar
                 </button>
+
+                @if(errorMessage) {
+                    <div style="background: var(--cds-support-error-10); border-left: 4px solid var(--cds-support-error); padding: 0.75rem; margin-top: 1rem;">
+                        <p style="color: var(--cds-support-error); font-size: 0.875rem; margin: 0; font-weight: 500;">
+                            {{ errorMessage }}
+                        </p>
+                    </div>
+                }
             </form>
         </div>
 

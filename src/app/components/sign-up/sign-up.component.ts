@@ -16,6 +16,7 @@ export class SignUpComponent implements OnInit {
   private userService = inject(UserService);
   private router = inject(Router);
   isDarkMode: boolean = false;
+  showPassword = false;
 
 
   ngOnInit(): void {

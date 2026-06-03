@@ -1,0 +1,61 @@
+<div class="cds-home-hero">
+    <div class="cds-home-hero__content">
+        <h1 class="cds-home-hero__title">Descubre el confort en cada rincón</h1>
+        <p class="cds-home-hero__subtitle">Reserva tu estadía ideal con nosotros de manera rápida y segura.</p>
+        
+        <div class="cds-home-search-box">
+            <form [formGroup]="searchForm" (ngSubmit)="onSearch()" class="cds-home-search-form">
+                
+                <div class="cds-form-item">
+                    <label class="cds-label" for="checkIn">Check-In</label>
+                    <input class="cds-text-input" type="date" id="checkIn" formControlName="checkIn" [min]="minDate">
+                    @if(searchForm.get('checkIn')?.invalid && searchForm.get('checkIn')?.touched){
+                        <small class="cds-form-error">Selecciona una fecha</small>
+                    }
+                </div>
+
+                <div class="cds-form-item">
+                    <label class="cds-label" for="checkOut">Check-Out</label>
+                    <input class="cds-text-input" type="date" id="checkOut" formControlName="checkOut" [min]="minOutDate">
+                    @if(searchForm.get('checkOut')?.invalid && searchForm.get('checkOut')?.touched){
+                        <small class="cds-form-error">Selecciona una fecha</small>
+                    }
+                </div>
+
+                <div class="cds-form-item">
+                    <label class="cds-label" for="guests">Huéspedes</label>
+                    <input class="cds-text-input" type="number" id="guests" formControlName="guests" min="1">
+                    @if(searchForm.get('guests')?.invalid && searchForm.get('guests')?.touched){
+                        <small class="cds-form-error">Mínimo 1 huésped</small>
+                    }
+                </div>
+
+                <div class="cds-form-item" style="justify-content: flex-end; padding-bottom: 0;">
+                    <button class="cds-btn-primary" type="submit" style="height: 2.5rem; align-self: flex-end;">
+                        Buscar Disponibilidad
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="cds-home-features">
+    <div class="cds-home-features__container">
+        <div class="cds-feature">
+            <span class="material-symbols-outlined cds-feature__icon">wifi</span>
+            <h3>WiFi de Alta Velocidad</h3>
+            <p>Conexión estable y rápida en todas nuestras instalaciones sin costo adicional.</p>
+        </div>
+        <div class="cds-feature">
+            <span class="material-symbols-outlined cds-feature__icon">pool</span>
+            <h3>Piscina y Relax</h3>
+            <p>Disfruta de nuestra piscina al aire libre y áreas de descanso premium.</p>
+        </div>
+        <div class="cds-feature">
+            <span class="material-symbols-outlined cds-feature__icon">restaurant</span>
+            <h3>Gastronomía Local</h3>
+            <p>Descubre los mejores platillos locales e internacionales en nuestro restaurante.</p>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,124 @@
+.cds-my-bookings {
+  background-color: var(--cds-background);
+  min-height: 100%;
+  padding: 3rem 1.5rem;
+}
+
+.cds-my-bookings__container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.cds-my-bookings__header {
+  margin-bottom: 2rem;
+}
+
+.cds-my-bookings__header h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.cds-my-bookings__header p {
+  color: var(--cds-text-secondary);
+}
+
+.cds-my-bookings__empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  background-color: var(--cds-layer-01);
+  border-radius: 8px;
+  border: 1px dashed var(--cds-border-subtle);
+}
+
+.cds-my-bookings__empty h2 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.cds-my-bookings__list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.cds-booking-card {
+  background-color: var(--cds-layer-01);
+  border: 1px solid var(--cds-border-subtle);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.cds-booking-card__header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--cds-border-subtle);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--cds-layer-02);
+}
+
+.cds-booking-card__header h3 {
+  font-size: 1.125rem;
+  margin-bottom: 0.25rem;
+}
+
+.cds-booking-card__date {
+  font-size: 0.75rem;
+  color: var(--cds-text-secondary);
+}
+
+.cds-booking-card__body {
+  padding: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1.5rem;
+}
+
+.cds-booking-card__info-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.cds-booking-card__info-group span {
+  font-size: 0.75rem;
+  color: var(--cds-text-secondary);
+  text-transform: uppercase;
+}
+
+.cds-booking-card__footer {
+  padding: 1.5rem;
+  border-top: 1px solid var(--cds-border-subtle);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--cds-layer-02);
+}
+
+.cds-booking-card__total {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cds-booking-card__total span {
+  font-size: 0.875rem;
+  color: var(--cds-text-secondary);
+}
+
+.cds-booking-card__total strong {
+  font-size: 1.25rem;
+}
+
+/* Status Tags (Reusing pattern from dashboard) */
+.cds-status-tag {
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.cds-status-tag--pending { background-color: var(--cds-support-warning); color: #000; }
+.cds-status-tag--confirmed { background-color: var(--cds-support-success); color: #fff; }
+.cds-status-tag--cancelled { background-color: var(--cds-support-error); color: #fff; }
+.cds-status-tag--completed { background-color: var(--cds-interactive); color: #fff; }
